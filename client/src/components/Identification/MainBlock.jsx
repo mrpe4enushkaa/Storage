@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Stepper from "../react-bits/Stepper/Stepper";
 import StepContainer from "../UI/StepContainer/StepContainer";
-import Form from "./Indentificator";
+import Form from "./Identificator";
 import Block from "../UI/Block/Block";
 
 export default function MainBlock() {

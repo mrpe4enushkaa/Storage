@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from "react-router";
-import Indentification from './pages/Indentification/Indentification';
+import Indentification from './pages/Identification/Identification';
 import './App.scss';
 
 export default function App() {
