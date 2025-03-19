@@ -111,7 +111,7 @@ export default function Stepper({
               {currentStep !== 1 && (
                 <button
                   onClick={handleBack}
-                  className={`back-button ${currentStep === 1 ? "inactive" : ""}`}
+                  className={`back-button ${currentStep === 1 ? "inactive" : ""} font-medium`}
                   {...backButtonProps}
                 >
                   {backButtonText}
@@ -119,7 +119,7 @@ export default function Stepper({
               )}
               <button
                 onClick={isLastStep ? handleComplete : handleNext}
-                className="next-button"
+                className="next-button font-medium"
                 {...nextButtonProps}
               >
                 {isLastStep ? "Complete" : nextButtonText}
@@ -206,9 +206,9 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators }
     <motion.div onClick={handleClick} className="step-indicator" animate={status} initial={false}>
       <motion.div
         variants={{
-          inactive: { scale: 1, backgroundColor: "#222", color: "#a3a3a3" },
-          active: { scale: 1, backgroundColor: "#00d8ff", color: "#00d8ff" },
-          complete: { scale: 1, backgroundColor: "#00d8ff", color: "#3b82f6" },
+          inactive: { scale: 1, backgroundColor: "#fff", color: "#000" },
+          active: { scale: 1, backgroundColor: "#fff", color: "#fff" },
+          complete: { scale: 1, backgroundColor: "#fff", color: "#000" },
         }}
         transition={{ duration: 0.3 }}
         className="step-indicator-inner"
@@ -218,7 +218,7 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators }
         ) : status === "active" ? (
           <div className="active-dot" />
         ) : (
-          <span className="step-number">{step}</span>
+          <span className="step-number font-medium">{step}</span>
         )}
       </motion.div>
     </motion.div>
@@ -228,7 +228,7 @@ function StepIndicator({ step, currentStep, onClickStep, disableStepIndicators }
 function StepConnector({ isComplete }) {
   const lineVariants = {
     incomplete: { width: 0, backgroundColor: "transparent" },
-    complete: { width: "100%", backgroundColor: "#00d8ff" },
+    complete: { width: "100%", backgroundColor: "#fff" },
   };
 
   return (
