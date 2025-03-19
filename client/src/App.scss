@@ -1,0 +1,29 @@
+.heading {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.text {
+    font-size: 1rem;
+}
+
+
+.block--center {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+label {
+    font-size: 1.3rem;
+}
+
+input {
+    width: 91%;
+    height: 35px;
+    border-radius: 20px;
+    border: none;
+    margin-bottom: 15px;
+    outline: none;
+    padding: 0 15px;
+}
