@@ -7,10 +7,10 @@
 	"watermark": true,
 	"configFiles": {},
 	"paths": {
-		"*": "./src/components/UI",
-		"Animations": "./src/components/UI/",
-		"Backgrounds": "./src/components/UI",
-		"Components": "./src/components/UI",
-		"TextAnimations": "./src/components/UI"
+		"*": "./src/components/react-bits",
+		"Animations": "./src/components/react-bits",
+		"Backgrounds": "./src/components/react-bits",
+		"Components": "./src/components/react-bits",
+		"TextAnimations": "./src/components/react-bits"
 	}
 }
