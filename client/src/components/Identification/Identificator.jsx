@@ -1,11 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from "./Form";
 
 export default function Indentificator({ isSignIn, setSignIn }) {
+    const [keyForm, setKeyForm] = useState(0);
+
     return (
         <>
             {isSignIn ? (
-                <Form data={{name: "Sign in"}} />
+                <Form
+                    data={{ name: "Sign in" }}
+                    dataFor={{
+                        username: "",
+                        password: ""
+                    }}
+                    key={keyForm}
+                />
             ) : (
                 <Form
                     data={{
@@ -13,13 +22,20 @@ export default function Indentificator({ isSignIn, setSignIn }) {
                         email: true,
                         repeatPassword: true
                     }}
+                    dataFor={{
+                        email: "",
+                        username: "",
+                        password: "",
+                        repeatPassword: ""
+                    }}
+                    key={keyForm}
                 />
             )}
 
             <button
-                onClick={(e) => {
+                onClick={() => {
                     setSignIn(!isSignIn);
-                    document.querySelectorAll('#form-indefication').forEach(form => form.reset());
+                    setKeyForm(prev => prev + 1);
                 }}
                 className="toggleIndentification font-regular"
             >

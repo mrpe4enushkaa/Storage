@@ -27,3 +27,8 @@ input {
     outline: none;
     padding: 0 15px;
 }
+
+.input--error{
+    background: rgb(60, 60, 60);
+    color: #fff;
+}

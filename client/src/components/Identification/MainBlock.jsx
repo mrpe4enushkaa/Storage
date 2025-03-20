@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Stepper from "../react-bits/Stepper/Stepper";
 import StepContainer from "../UI/StepContainer/StepContainer";
-import Form from "./Identificator";
+import Indentificator from "./Identificator";
 import Block from "../UI/Block/Block";
 
 export default function MainBlock() {
@@ -16,7 +16,7 @@ export default function MainBlock() {
                 />
             </StepContainer>
             <StepContainer>
-                <Form isSignIn={isSignIn} setSignIn={setSignIn} />
+                <Indentificator isSignIn={isSignIn} setSignIn={setSignIn} />
             </StepContainer>
             <StepContainer>
                 <Block
