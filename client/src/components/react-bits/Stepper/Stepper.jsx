@@ -1,5 +1,5 @@
 /*
-	Installed from https://reactbits.dev/default/
+  Installed from https://reactbits.dev/default/
 */
 
 import React, { useState, Children, useRef, useLayoutEffect } from "react";
