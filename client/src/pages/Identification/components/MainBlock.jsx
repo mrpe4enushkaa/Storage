@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Stepper from "../react-bits/Stepper/Stepper";
-import StepContainer from "../UI/StepContainer/StepContainer";
+import Stepper from "../../../components/react-bits/Stepper/Stepper";
+import StepContainer from "../../../components/UI/StepContainer/StepContainer";
 import Indentificator from "./Identificator";
-import Block from "../UI/Block/Block";
+import Block from "../../../components/UI/Block/Block";
 
 export default function MainBlock() {
     const [isSignIn, setSignIn] = useState(true);

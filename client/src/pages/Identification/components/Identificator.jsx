@@ -2,33 +2,42 @@ import React, { useState } from "react";
 import Form from "./Form";
 
 export default function Indentificator({ isSignIn, setSignIn }) {
+    const [data, setData] = useState({});
     const [keyForm, setKeyForm] = useState(0);
 
     return (
         <>
             {isSignIn ? (
                 <Form
-                    data={{ name: "Sign in" }}
-                    dataFor={{
-                        username: "",
-                        password: ""
-                    }}
                     key={keyForm}
+                    settings={{
+                        name: "Sign in",
+                        email: false,
+                        repeatPassword: false,
+                        inputs: {
+                            username: "",
+                            password: ""
+                        }
+                    }}
+                    data={data}
+                    setData={setData}
                 />
             ) : (
                 <Form
-                    data={{
+                    key={keyForm}
+                    settings={{
                         name: "Sign up",
                         email: true,
-                        repeatPassword: true
+                        repeatPassword: true,
+                        inputs: {
+                            email: "",
+                            username: "",
+                            password: "",
+                            repeatPassword: ""
+                        }
                     }}
-                    dataFor={{
-                        email: "",
-                        username: "",
-                        password: "",
-                        repeatPassword: ""
-                    }}
-                    key={keyForm}
+                    data={data}
+                    setData={setData}
                 />
             )}
 
