@@ -1,32 +1,46 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
+import Input from "../../../components/UI/Input/Input";
 
-export default function Form({ settings, data, setData }) {
-    useEffect(() => {
+export default function Form({ settings, data, setData, validate, setValidate }) {
+    useLayoutEffect(() => {
         const newInputs = { ...settings?.inputs };
         setData(newInputs);
+        setValidate(Object.fromEntries(Object.keys(newInputs).map(key => [key, false])));
     }, [JSON.stringify(settings)]);
 
-    const validateEmail = (email) => {
-        const symbols = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return symbols.test(email);
-    };
+    const validateForm = () => {
+        const validateEmail = (email) => {
+            const symbols = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            setValidate(prev => ({ ...prev, email: symbols.test(email) }));
+        };
 
-    const validateUsername = (username) => {
-        const hasSymbols = (name) => /[^a-zA-Z0-9_]/.test(name);
+        const validateUsername = (username) => {
+            const hasSymbols = (name) => /[^a-zA-Z0-9_]/.test(name);
+            setValidate(prev => ({ ...prev, username: username.length >= 3 && username.length <= 20 && !hasSymbols(username) }));
+        };
 
-        return username.length >= 3 && username.length <= 20 && !hasSymbols(username);
-    };
+        const validatePassword = (password) => {
+            password = String(password);
+            const isValid = password.length >= 6 && password.length <= 30;
+            setValidate(prev => ({ ...prev, password: isValid }));
+            return isValid;
+        };
 
-    const validatePassword = (password) => {
-        password = String(password);
-        return password.length >= 6 && password.length <= 30;
-    }
+        const validateRepeatPassword = (password, repeatPassword) => {
+            if (!validatePassword(repeatPassword) || repeatPassword !== password) {
+                setValidate(prev => ({ ...prev, repeatPassword: false }));
+            } else {
+                setValidate(prev => ({ ...prev, repeatPassword: true }));
+            }
+        };
 
-    const validateRepeatPassword = (target, password, repeatPassword) => {
-        if (!validatePassword(repeatPassword) && repeatPassword.toUpperCase() !== password.toUpperCase()) {
-            target.classList.toggle('input--error');
-        } else {
-            target.classList.toggle('input--error');
+        if (settings.email) {
+            validateEmail(data.email);
+        }
+        validateUsername(data.username);
+        validatePassword(data.password);
+        if (settings.repeatPassword) {
+            validateRepeatPassword(data.password, data.repeatPassword);
         }
     }
 
@@ -35,51 +49,27 @@ export default function Form({ settings, data, setData }) {
             <span className="heading font-medium">{settings?.name}</span>
 
             {settings?.email && (
-                <>
-                    <label htmlFor="email">Email</label>
-                    <input
-                        key="email"
-                        id="email"
-                        type="email"
-                        value={data?.email || ""}
-                        onChange={(e) => setData(prev => ({ ...prev, email: e.target.value }))}
-                    // onBlur={(e) => { console.log(validateEmail(e.target.value)) }}
-                    />
-                </>
+                <Input label="Email" id="email" type="email"
+                    value={data?.email || ""} name="email" setData={setData}
+                    validate={validateForm}
+                />
             )}
 
-            <label htmlFor="login">Username</label>
-            <input
-                key="username"
-                id="login"
-                type="text"
-                value={data?.username || ""}
-                onChange={(e) => setData(prev => ({ ...prev, username: e.target.value }))}
-            // onBlur={(e) => { console.log(validateUsername(e.target.value)) }}
+            <Input label="Username" id="login" type="text"
+                value={data?.username || ""} name="username" setData={setData}
+                validate={validateForm}
             />
 
-            <label htmlFor="password">Password</label>
-            <input
-                key="password"
-                id="password"
-                type="password"
-                value={data?.password || ""}
-                onChange={(e) => setData(prev => ({ ...prev, password: e.target.value }))}
-            // onBlur={(e) => { console.log(validatePassword(e.target.value), validateRepeatPassword(e.target.value, data?.repeatPassword)); }}
+            <Input label="Password" id="password"
+                type="password" value={data?.password || ""} name="password" setData={setData}
+                validate={validateForm}
             />
 
             {settings.repeatPassword && (
-                <>
-                    <label htmlFor="password-repeat">Repeat the password</label>
-                    <input
-                        key="repeatPassword"
-                        id="repeatPassword"
-                        type="password"
-                        value={data?.repeatPassword || ""}
-                        onChange={(e) => setData(prev => ({ ...prev, repeatPassword: e.target.value }))}
-                    // onBlur={(e) => { validateRepeatPassword(e.target, data.password, e.target.value); }}
-                    />
-                </>
+                <Input label="Repeat the password" id="password-repeat" type="password"
+                    value={data?.repeatPassword || ""} name="repeatPassword" setData={setData}
+                    validate={validateForm}
+                />
             )}
         </form>
     );

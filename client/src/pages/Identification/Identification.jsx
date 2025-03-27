@@ -4,16 +4,10 @@ import MainBlock from "./components/MainBlock";
 import "./Identification.scss";
 
 export default function Indentification() {
-    const [isReady, setIsReady] = useState(false);
-
-    useEffect(() => {
-        setIsReady(true);
-    });
-
     return (
         <div className="indentification--inner">
             <Background />
-            {isReady === true && <MainBlock />}
+            <MainBlock />
         </div>
     );
 }
