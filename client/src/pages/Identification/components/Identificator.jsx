@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Form from "./Form";
 
 export default function Indentificator({ isSignIn, setSignIn, validate, setValidate, data, setData }) {
