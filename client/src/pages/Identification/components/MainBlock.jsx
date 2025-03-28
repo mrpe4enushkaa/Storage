@@ -3,38 +3,18 @@ import Stepper from "../../../components/react-bits/Stepper/Stepper";
 import StepContainer from "../../../components/UI/StepContainer/StepContainer";
 import Indentificator from "./Identificator";
 import Block from "../../../components/UI/Block/Block";
+import { handleCheckUser } from "../../../utils/handleCheckUser";
+import { useAuthForm } from "../../../hooks/useAuthForm";
 
 export default function MainBlock() {
-    const [isSignIn, setSignIn] = useState(true);
-    const [validate, setValidate] = useState({});
-    const [data, setData] = useState({});
-    const [step, setStep] = useState(1);
-
-    useLayoutEffect(() => {
-        console.log(validate);
-        if (step === 2) {
-            if (
-                !validate?.username ||
-                !validate?.password ||
-                (validate?.email !== undefined && !validate.email) ||
-                (validate?.repeatPassword !== undefined && !validate.repeatPassword)
-            ) {
-                document.querySelector('.next-button').disabled = true;
-            } else {
-                document.querySelector('.next-button').disabled = false;
-            }
-        }
-        if (step === 3) {
-            document.querySelector('.back-button').disabled = true;
-            document.querySelector('.back-button').innerHTML = '';
-        }
-    }, [validate, step])
+    const { isSignIn, setSignIn, validate, setValidate, data, setData, step, setStep } = useAuthForm(handleCheckUser);
 
     return (
         <Stepper
-            initialStep={1}
+            initialStep={step}
             disableStepIndicators={true}
-            onStepChange={(step) => setStep(step)}>
+            onStepChange={(step) => setStep(step)}
+        >
             <StepContainer key="welcome">
                 <Block
                     heading="Welcome to the storage!"

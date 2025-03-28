@@ -5,7 +5,6 @@ import Input from "../../../components/UI/Input/Input";
 export default function Form({ settings, data, setData, validate, setValidate }) {
     useLayoutEffect(() => {
         const newInputs = { ...settings?.inputs };
-        console.log(data)
         setData(Object.fromEntries(Object.keys(newInputs).map(key => [key, ""])));
         setValidate(Object.fromEntries(Object.keys(newInputs).map(key => [key, false])));
     }, [JSON.stringify(settings)]);

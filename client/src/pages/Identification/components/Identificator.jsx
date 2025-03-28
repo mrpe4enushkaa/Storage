@@ -47,6 +47,7 @@ export default function Indentificator({ isSignIn, setSignIn, validate, setValid
                     setSignIn(!isSignIn);
                 }}
                 className="toggleIndentification font-regular"
+                id="changeForm"
             >
                 {isSignIn ? "Don't have an account? Sign up" : "Do you have an account? Sign in"}
             </button>
