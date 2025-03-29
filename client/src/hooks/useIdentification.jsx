@@ -63,6 +63,10 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
             }
         };
 
+        const Reload = () => {
+            window.location.reload();
+        }
+
         if (step === 1) {
             button.style.border = "none";
             button.style.background = "#fff";
@@ -80,6 +84,8 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
         if (step === 3) {
             document.querySelector('.back-button').disabled = true;
             document.querySelector('.back-button').innerHTML = '';
+            
+            button.addEventListener('click', Reload);
         }
     }, [validate, step]);
 }

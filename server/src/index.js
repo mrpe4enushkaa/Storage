@@ -1,59 +1,81 @@
 const express = require("express");
 const app = express();
-require("dotenv").config({ path: "./.env" });
-
-const fs = require("fs");
 const mysql = require("mysql2");
+const bcrypt = require("bcrypt");
+require("dotenv").config({ path: "./.env" });
 
 app.use(require("cors")());
 app.use(express.json());
 
-const createConnection = mysql.createConnection({
-    host: "localhost",
-    user: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-});
+const PORT = 3000;
 
-function createDb() {
-    const sql = fs.readFileSync('./database/createDatabase.sql', 'utf8');
-    createConnection.query(sql);
-    createConnection.end();
+const database = require("./connections/database");
+const table = require("./connections/table");
+
+async function init() {
+    await database();
+    await table();
 }
 
-createDb();
+init();
 
 const connection = mysql.createConnection({
     host: "localhost",
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
-    database: "storage"
+    database: 'storage'
 });
 
-function createTable() {
-    const sql = fs.readFileSync('./database/createTable.sql', 'utf8');
-    connection.query(sql);
+async function checkUser(username, password) {
+    return new Promise((resolve, reject) => {
+        connection.query("SELECT password FROM users where username=?", [username], async (error, result) => {
+            if (error) {
+                console.log(error);
+                return reject(false);
+            }
+
+            if (result.length > 0) {
+                const hashedPassword = result[0].password;
+                const match = await bcrypt.compare(password, hashedPassword);
+
+                return resolve(match);
+            } else {
+                return resolve(false);
+            }
+        });
+    });
 }
 
-createTable();
+async function addUser(email, username, password) {
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    return new Promise((resolve, reject) => {
+        connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
+            if (error) {
+                return reject(false)
+            }
+
+            return resolve(true);
+        });
+    });
+}
 
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
-    console.log(`username: ${username}, password: ${password}`);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    res.status(200).json({ user: true });
+    res.status(200).json({ user: await checkUser(username, password) });
 });
 
 app.post("/api/addUser", async (req, res) => {
     const { email, username, password } = req.body;
-    console.log(`email: ${email}, username: ${username}, password: ${password}`);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-    res.status(200).json({ add: false });
+    res.status(200).json({ add: await addUser(email, username, password) });
 });
 
-app.listen(1000, () => {
-    console.log("🚀 Сервер запущен на http://localhost:1000");
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

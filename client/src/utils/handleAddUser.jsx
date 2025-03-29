@@ -10,7 +10,7 @@ export const handleAddUser = async (email, username, password) => {
     visibleForm(statesChecking.loading, false);
 
     try {
-        const response = await fetch("http://localhost:1000/api/addUser", {
+        const response = await fetch("http://localhost:3000/api/addUser", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

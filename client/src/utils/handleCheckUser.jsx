@@ -10,7 +10,7 @@ export const handleCheckUser = async (username, password) => {
     visibleForm(statesChecking.loading, true);
 
     try {
-        const response = await fetch("http://localhost:1000/api/checkUser", {
+        const response = await fetch("http://localhost:3000/api/checkUser", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
