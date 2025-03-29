@@ -3,11 +3,17 @@ import Stepper from "../../../components/react-bits/Stepper/Stepper";
 import StepContainer from "../../../components/UI/StepContainer/StepContainer";
 import Indentificator from "./Identificator";
 import Block from "../../../components/UI/Block/Block";
-import { handleCheckUser } from "../../../utils/handleCheckUser";
-import { useAuthForm } from "../../../hooks/useAuthForm";
+import Loader from "../../../components/UI/Loader/Loader";
+import { useIdentification } from "../../../hooks/useIdentification";
+
 
 export default function MainBlock() {
-    const { isSignIn, setSignIn, validate, setValidate, data, setData, step, setStep } = useAuthForm(handleCheckUser);
+    const [isSignIn, setSignIn] = useState(true);
+    const [validate, setValidate] = useState({});
+    const [data, setData] = useState({});
+    const [step, setStep] = useState(1);
+
+    useIdentification(isSignIn, validate, data, step, setStep);
 
     return (
         <Stepper
@@ -27,6 +33,7 @@ export default function MainBlock() {
                     validate={validate} setValidate={setValidate}
                     data={data} setData={setData}
                 />
+                <Loader />
             </StepContainer>
             <StepContainer key="hello">
                 <Block
