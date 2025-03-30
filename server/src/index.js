@@ -47,7 +47,7 @@ async function checkUser(username, password) {
 }
 
 async function addUser(email, username, password) {
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 15);
 
     return new Promise((resolve, reject) => {
         connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {

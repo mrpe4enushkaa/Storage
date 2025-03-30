@@ -2,7 +2,8 @@ import React, { useLayoutEffect } from "react";
 import { handleAddUser } from "../utils/handleAddUser";
 import { handleCheckUser } from "../utils/handleCheckUser";
 
-export const useIdentification = (isSignIn, validate, data, step, setStep) => {
+export const useIdentification = (isSignIn, validate, data, step, setStep, showToast) => {
+
     useLayoutEffect(() => {
         const button = document.querySelector('.next-button');
 
@@ -17,7 +18,7 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
         const errorButtonNext = () => {
             const button = document.querySelector('.next-button');
 
-            button.style.border = "2px solid #fff";
+            button.style.border = "2px solid rgb(34, 34, 34)";
             button.style.background = "transparent";
             button.style.color = "#fff";
         }
@@ -28,6 +29,12 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
 
             if (isSignIn) {
                 if (!validate?.username || !validate?.password) {
+                    if (!validate?.username) {
+                        showToast("error", "The username must contain from 3 to 30 characters.");
+                    } 
+                    else if (!validate?.password) {
+                        showToast("error", "The password must contain from 6 to 30 characters.");
+                    }
                     errorButtonNext();
                     return;
                 }
@@ -35,18 +42,28 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
                 const responseOfCheck = await handleCheckUser(data.username, data.password);
 
                 if (responseOfCheck === false) {
+                    showToast("error", "The user was not found");
                     errorButtonNext();
                     return;
                 }
 
                 normalButtonNext();
-
+                showToast("success", `Hello ${data.username}`);
                 setStep(3);
             } else {
                 if (
-                    !validate?.username || !validate?.password ||
-                    !validate.email || !validate.repeatPassword
+                    !validate.email || !validate?.username ||
+                    !validate?.password || !validate.repeatPassword
                 ) {
+                    if (!validate.email) {
+                        showToast("error", "Incorrectly entered email.");
+                    } else if(!validate?.username){
+                        showToast("error", "The username must contain from 3 to 30 characters.");
+                    } else if(!validate?.password){
+                        showToast("error", "The password must contain from 6 to 30 characters.");
+                    } else if (!validate.repeatPassword) {
+                        showToast("error", "Passwords must match.");
+                    }
                     errorButtonNext();
                     return;
                 }
@@ -63,8 +80,10 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
             }
         };
 
-        const Reload = () => {
-            window.location.reload();
+        const Reload = async () => {
+            return new Promise((resolve) => {
+                resolve(setTimeout(() => { window.location.reload(); }, 500));
+            });
         }
 
         if (step === 1) {
@@ -84,7 +103,7 @@ export const useIdentification = (isSignIn, validate, data, step, setStep) => {
         if (step === 3) {
             document.querySelector('.back-button').disabled = true;
             document.querySelector('.back-button').innerHTML = '';
-            
+
             button.addEventListener('click', Reload);
         }
     }, [validate, step]);

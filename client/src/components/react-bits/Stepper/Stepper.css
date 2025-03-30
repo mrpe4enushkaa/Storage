@@ -80,7 +80,7 @@
 }
 
 .back-button {
-  transition: all 350ms;
+  /* transition: all 350ms; */
   border-radius: 0.25rem;
   /* padding: 0.25rem 0.5rem; */
   color: #fff;

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState } from "react";
 import Stepper from "../../../components/react-bits/Stepper/Stepper";
 import StepContainer from "../../../components/UI/StepContainer/StepContainer";
 import Indentificator from "./Identificator";
@@ -7,13 +7,13 @@ import Loader from "../../../components/UI/Loader/Loader";
 import { useIdentification } from "../../../hooks/useIdentification";
 
 
-export default function MainBlock() {
+export default function MainBlock({ showToast }) {
     const [isSignIn, setSignIn] = useState(true);
     const [validate, setValidate] = useState({});
     const [data, setData] = useState({});
     const [step, setStep] = useState(1);
 
-    useIdentification(isSignIn, validate, data, step, setStep);
+    useIdentification(isSignIn, validate, data, step, setStep, showToast);
 
     return (
         <Stepper

@@ -11,18 +11,18 @@ const connection = mysql.createConnection({
 });
 
 async function table() {
-    return new Promise((resolve, rejects) => {
+    return new Promise((resolve, reject) => {
         const sql = fs.readFileSync('./database/createTable.sql', 'utf8');
         connection.query(sql, (error, results)=>{
             if (error) {
                 console.log("Error: ", error);
-                rejects(error);
+                reject(error);
             }
 
             connection.end((error)=>{
                 if(error) {
                     console.log("Error: ", error);
-                    rejects(error);
+                    reject(error);
                 }
 
                 resolve(results);

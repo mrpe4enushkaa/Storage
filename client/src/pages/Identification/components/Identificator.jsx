@@ -45,6 +45,12 @@ export default function Indentificator({ isSignIn, setSignIn, validate, setValid
             <button
                 onClick={() => {
                     setSignIn(!isSignIn);
+
+                    const button = document.querySelector('.next-button');
+
+                    button.style.border = "none";
+                    button.style.background = "#fff";
+                    button.style.color = "#000";
                 }}
                 className="toggleIndentification font-regular"
                 id="changeForm"
