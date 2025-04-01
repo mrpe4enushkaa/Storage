@@ -6,7 +6,6 @@ import Block from "../../../components/UI/Block/Block";
 import Loader from "../../../components/UI/Loader/Loader";
 import { useIdentification } from "../../../hooks/useIdentification";
 
-
 export default function MainBlock({ showToast }) {
     const [isSignIn, setSignIn] = useState(true);
     const [validate, setValidate] = useState({});

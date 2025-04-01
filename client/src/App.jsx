@@ -1,13 +1,18 @@
 import React from 'react';
-import { Routes, Route } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Indentification from './pages/Identification/Identification';
+import Profile from './pages/Profile/Profile';
+import Error from './pages/Error/Error';
 import './App.scss';
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Indentification />} />
-      <Route path='*' element={<span style={{ color: '#fff' }}>Error: 404</span>} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Indentification />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path='*' element={<Error />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

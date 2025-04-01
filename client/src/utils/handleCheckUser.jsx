@@ -7,12 +7,13 @@ export const handleCheckUser = async (username, password) => {
         error: false
     }
 
-    visibleForm(statesChecking.loading, true);
+    visibleForm(statesChecking.loading);
 
     try {
         const response = await fetch("http://localhost:3000/api/checkUser", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
                 username: username,
                 password: password
@@ -28,7 +29,7 @@ export const handleCheckUser = async (username, password) => {
     }
 
     statesChecking.loading = false;
-    visibleForm(statesChecking.loading, true);
+    visibleForm(statesChecking.loading);
 
     return statesChecking.result;
 }

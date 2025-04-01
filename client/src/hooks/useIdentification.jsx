@@ -1,9 +1,10 @@
 import React, { useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { handleAddUser } from "../utils/handleAddUser";
 import { handleCheckUser } from "../utils/handleCheckUser";
 
 export const useIdentification = (isSignIn, validate, data, step, setStep, showToast) => {
-
+    const navigate = useNavigate();
     useLayoutEffect(() => {
         const button = document.querySelector('.next-button');
 
@@ -31,7 +32,7 @@ export const useIdentification = (isSignIn, validate, data, step, setStep, showT
                 if (!validate?.username || !validate?.password) {
                     if (!validate?.username) {
                         showToast("error", "The username must contain from 3 to 30 characters.");
-                    } 
+                    }
                     else if (!validate?.password) {
                         showToast("error", "The password must contain from 6 to 30 characters.");
                     }
@@ -57,9 +58,9 @@ export const useIdentification = (isSignIn, validate, data, step, setStep, showT
                 ) {
                     if (!validate.email) {
                         showToast("error", "Incorrectly entered email.");
-                    } else if(!validate?.username){
+                    } else if (!validate?.username) {
                         showToast("error", "The username must contain from 3 to 30 characters.");
-                    } else if(!validate?.password){
+                    } else if (!validate?.password) {
                         showToast("error", "The password must contain from 6 to 30 characters.");
                     } else if (!validate.repeatPassword) {
                         showToast("error", "Passwords must match.");
@@ -80,9 +81,9 @@ export const useIdentification = (isSignIn, validate, data, step, setStep, showT
             }
         };
 
-        const Reload = async () => {
+        const toProfile = async () => {
             return new Promise((resolve) => {
-                resolve(setTimeout(() => { window.location.reload(); }, 500));
+                resolve(setTimeout(() => { navigate("/profile") }, 500));
             });
         }
 
@@ -104,7 +105,7 @@ export const useIdentification = (isSignIn, validate, data, step, setStep, showT
             document.querySelector('.back-button').disabled = true;
             document.querySelector('.back-button').innerHTML = '';
 
-            button.addEventListener('click', Reload);
+            button.addEventListener('click', toProfile);
         }
     }, [validate, step]);
 }
