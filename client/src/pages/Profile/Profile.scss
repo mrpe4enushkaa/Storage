@@ -2,6 +2,7 @@
     border: 1px solid rgb(34, 34, 34);
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(3px);
+    border-radius: 2rem;
 }
 
 .profile {
@@ -11,7 +12,7 @@
 
     display: grid;
     grid-template-columns: 15% 82%;
-    grid-template-rows: 100px 84%;
+    grid-template-rows: 100px 83.5vh;
     gap: 20px;
     grid-template-areas: 
     "nav-bar nav-bar"
@@ -19,21 +20,22 @@
 }
 
 .profile__nav-bar {
-    border-radius: 1rem;
     grid-area: nav-bar;
+    padding: 20px;
+    column-gap: 20px;
+    display: flex;
+    align-items: center;
 
     @extend %blocks-styles;
 }
 
 .profile__aside {
-    border-radius: 2rem;
     grid-area: profile__aside;
 
     @extend %blocks-styles;
 }
 
 .profile__elements {
-    border-radius: 2rem;
     grid-area: profile__elements;
 
     @extend %blocks-styles;

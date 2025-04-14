@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Background from "../../components/UI/Background/Background";
 import MainBlock from "./components/MainBlock";
@@ -23,7 +23,7 @@ export default function Indentification() {
             });
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (isDataLoaded && (userData?.rights && userData?.decoded)) {
             navigate("/profile");
         }

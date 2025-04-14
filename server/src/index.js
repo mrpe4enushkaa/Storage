@@ -62,7 +62,7 @@ async function addUser(email, username, password) {
                 return resolve({ add: false, id: null });
             }
 
-            if(result){
+            if (result) {
                 connection.query("SELECT id_user FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
                     if (error) {
                         return reject({ add: false, id: null });
@@ -79,7 +79,7 @@ const rightsMiddleware = (req, res, next) => {
     const token = req.cookies.jwt;
 
     if (!token) {
-        return res.json({ rights: false });
+        return res.json({ "rights": false });
     }
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -93,7 +93,7 @@ app.post("/api/checkUser", async (req, res) => {
 
     const { match, id } = await checkUser(username, password);
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // await new Promise(resolve => setTimeout(resolve, 500));
 
     if (match) {
         const token = jwt.sign({ id, username }, SECRET_KEY, { expiresIn: "1h" });
@@ -105,16 +105,16 @@ app.post("/api/checkUser", async (req, res) => {
             maxAge: 3600000
         });
 
-        res.status(200).json({ user: true });
+        res.status(200).json({ "user": true });
     } else {
-        res.status(401).json({ user: false });
+        res.status(401).json({ "user": false });
     }
 });
 
 app.post("/api/addUser", async (req, res) => {
     const { email, username, password } = req.body;
 
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // await new Promise(resolve => setTimeout(resolve, 500));
 
     const { add, id } = await addUser(email, username, password);
 
@@ -128,16 +128,20 @@ app.post("/api/addUser", async (req, res) => {
             maxAge: 3600000
         });
 
-        res.status(200).json({ add: true });
+        res.status(200).json({ "add": true });
     } else {
-        res.status(401).json({ add: false });
+        res.status(401).json({ "add": false });
     }
 });
 
 app.get("/api/rights", rightsMiddleware, (req, res) => {
-    res.json({ data: req.data });
+    res.json({ "data": req.data });
 });
 
+app.get("/api/logout", (req, res) => {
+    res.clearCookie("jwt");
+    res.json({ "exit": true })
+});
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
