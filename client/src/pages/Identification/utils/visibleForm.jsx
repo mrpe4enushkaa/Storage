@@ -1,5 +1,5 @@
-import { AnimationFade } from "../components/Animations/AnimationFade";
-import { AnimationAppear } from "../components/Animations/AnimationAppear";
+import { AnimationFade } from "../../../components/Animations/AnimationFade";
+import { AnimationAppear } from "../../../components/Animations/AnimationAppear";
 
 export const visibleForm = (loading) => {
     document.querySelector('.loader').style.display = loading ? 'inline-block' : 'none';

@@ -1,0 +1,40 @@
+%blocks-styles{
+    border: 1px solid rgb(34, 34, 34);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(3px);
+}
+
+.profile {
+    margin: 20px;
+    width: 100%;
+    height: 100vh;
+
+    display: grid;
+    grid-template-columns: 15% 82%;
+    grid-template-rows: 100px 84%;
+    gap: 20px;
+    grid-template-areas: 
+    "nav-bar nav-bar"
+    "profile__aside profile__elements";
+}
+
+.profile__nav-bar {
+    border-radius: 1rem;
+    grid-area: nav-bar;
+
+    @extend %blocks-styles;
+}
+
+.profile__aside {
+    border-radius: 2rem;
+    grid-area: profile__aside;
+
+    @extend %blocks-styles;
+}
+
+.profile__elements {
+    border-radius: 2rem;
+    grid-area: profile__elements;
+
+    @extend %blocks-styles;
+}

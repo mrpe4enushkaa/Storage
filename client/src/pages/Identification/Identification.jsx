@@ -29,6 +29,8 @@ export default function Indentification() {
         }
     }, [userData]);
 
+    document.title = "Identification";
+
     return (
         <div className="indentification--inner">
             <Background />

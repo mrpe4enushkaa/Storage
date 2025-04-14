@@ -56,14 +56,21 @@ async function checkUser(username, password) {
 
 async function addUser(email, username, password) {
     const hashPassword = await bcrypt.hash(password, 15);
-
     return new Promise((resolve, reject) => {
         connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
             if (error) {
-                return reject(false)
+                return resolve({ add: false, id: null });
             }
 
-            return resolve(true);
+            if(result){
+                connection.query("SELECT id_user FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
+                    if (error) {
+                        return reject({ add: false, id: null });
+                    }
+
+                    return resolve({ add: true, id: result[0].id_user });
+                });
+            }
         });
     });
 }
@@ -74,8 +81,10 @@ const rightsMiddleware = (req, res, next) => {
     if (!token) {
         return res.json({ rights: false });
     }
+
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
     req.data = { rights: true, decoded };
+
     next();
 }
 
@@ -107,7 +116,22 @@ app.post("/api/addUser", async (req, res) => {
 
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    res.status(200).json({ add: await addUser(email, username, password) });
+    const { add, id } = await addUser(email, username, password);
+
+    if (add) {
+        const token = jwt.sign({ id, username }, process.env.SECRET_KEY, { expiresIn: "1h" });
+
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 3600000
+        });
+
+        res.status(200).json({ add: true });
+    } else {
+        res.status(401).json({ add: false });
+    }
 });
 
 app.get("/api/rights", rightsMiddleware, (req, res) => {
@@ -117,5 +141,4 @@ app.get("/api/rights", rightsMiddleware, (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
-    // connection.query("SELECT * FROM users", (error, result) => { console.log(result); })
 });

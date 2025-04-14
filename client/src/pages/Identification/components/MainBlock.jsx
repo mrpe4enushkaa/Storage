@@ -4,7 +4,7 @@ import StepContainer from "../../../components/UI/StepContainer/StepContainer";
 import Indentificator from "./Identificator";
 import Block from "../../../components/UI/Block/Block";
 import Loader from "../../../components/UI/Loader/Loader";
-import { useIdentification } from "../../../hooks/useIdentification";
+import { useIdentification } from "../hooks/useIdentification";
 
 export default function MainBlock({ showToast }) {
     const [isSignIn, setSignIn] = useState(true);

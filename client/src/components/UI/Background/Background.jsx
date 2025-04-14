@@ -8,7 +8,7 @@ export default function Background() {
             <Threads
                 amplitude={2}
                 distance={1.4}
-                enableMouseInteraction={true}
+                enableMouseInteraction={false}
                 color={[255, 255, 255]}
             />
         </div>

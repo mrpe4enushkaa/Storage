@@ -1,5 +1,7 @@
 import React, { useLayoutEffect, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Background from '../../components/UI/Background/Background';
+import "./Profile.scss"
 
 export default function Profile() {
     const [userData, setUserData] = useState({});
@@ -20,14 +22,27 @@ export default function Profile() {
 
     useEffect(() => {
         if (isDataLoaded && (!userData?.rights || !userData?.decoded?.id)) {
-            navigate("/error");
+            navigate("/");
         }
     }, [isDataLoaded, userData]);
 
+    document.title = "Profile";
+
     return (
-        <div>
-            <h1>Profile Page</h1>
-            <p>Welcome to your profile!</p>
-        </div>
+        <>
+            <Background />
+
+            <div className='profile'>
+                <nav className='profile__nav-bar'>
+
+                </nav>
+                <aside className='profile__aside'>
+
+                </aside>
+                <div className='profile__elements'>
+
+                </div>
+            </div>
+        </>
     );
 }
