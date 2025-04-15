@@ -90,10 +90,7 @@ const rightsMiddleware = (req, res, next) => {
 
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
-
     const { match, id } = await checkUser(username, password);
-
-    // await new Promise(resolve => setTimeout(resolve, 500));
 
     if (match) {
         const token = jwt.sign({ id, username }, SECRET_KEY, { expiresIn: "1h" });
@@ -113,9 +110,6 @@ app.post("/api/checkUser", async (req, res) => {
 
 app.post("/api/addUser", async (req, res) => {
     const { email, username, password } = req.body;
-
-    // await new Promise(resolve => setTimeout(resolve, 500));
-
     const { add, id } = await addUser(email, username, password);
 
     if (add) {
@@ -141,6 +135,19 @@ app.get("/api/rights", rightsMiddleware, (req, res) => {
 app.get("/api/logout", (req, res) => {
     res.clearCookie("jwt");
     res.json({ "exit": true })
+});
+
+app.post("/api/getDocuments", (req, res) => {
+    const { id_user } = req.body;
+
+    console.log(id_user);
+    res.json({ "message": "hello" })
+});
+
+app.post("/api/addDocument", (req, res) => {
+    const {id_user, type_data} = req.body;
+    
+    console.log(id_user, type_data);
 });
 
 app.listen(PORT, () => {

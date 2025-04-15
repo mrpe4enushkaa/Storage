@@ -5,6 +5,7 @@ import { handleCheckUser } from "../utils/handleCheckUser";
 
 export const useIdentification = (isSignIn, validate, data, step, setStep, showToast) => {
     const navigate = useNavigate();
+    
     useLayoutEffect(() => {
         const button = document.querySelector('.next-button');
 

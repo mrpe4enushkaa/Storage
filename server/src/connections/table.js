@@ -1,7 +1,5 @@
-const { rejects } = require("assert");
 const fs = require("fs");
 const mysql = require("mysql2");
-const { resolve } = require("path");
 
 const connection = mysql.createConnection({
     host: "localhost",

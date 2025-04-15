@@ -2,7 +2,7 @@ import React, { useLayoutEffect } from "react";
 import { validateForm } from "../utils/validateForm";
 import Input from "../../../components/UI/Input/Input";
 
-export default function Form({ settings, data, setData, validate, setValidate }) {
+export default function Form({ settings, data, setData, setValidate }) {
     useLayoutEffect(() => {
         const newInputs = { ...settings?.inputs };
         setData(Object.fromEntries(Object.keys(newInputs).map(key => [key, ""])));
