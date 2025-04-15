@@ -1,15 +1,24 @@
-%blocks-styles {
+%for-blocks {
     border: 1px solid rgb(34, 34, 34);
     background: rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(3px);
     border-radius: 2rem;
 }
 
-%width-icons {
+%blocks-styles {
+    @extend %for-blocks;
+    z-index: 0;
+}
+
+%icons {
     width: 75px;
     height: 75px;
-    stroke-width: 2px;
+    z-index: 1;
     cursor: pointer;
+
+    path {
+        stroke-width: 2px;
+    }
 }
 
 .wrapper {
@@ -36,16 +45,13 @@
     flex-direction: column;
     align-items: center;
     row-gap: 1rem;
+    position: relative;
 
     @extend %blocks-styles;
 }
 
 .icon-profile {
-    @extend %width-icons;
-
-    path {
-        stroke-width: 2px;
-    }
+    @extend %icons;
 }
 
 .icon-profile:nth-child(2) {
@@ -62,15 +68,27 @@
         stroke-width: 3px;
     }
 }
+
 .icon-profile:nth-child(4) {
     width: 60px;
     height: 60px;
-    margin-top: 5px;
     margin-top: auto;
 
     path {
         stroke-width: 2px;
     }
+}
+
+.info-block {
+    position: absolute;
+    top: 1;
+    right: -120px;
+    width: 100px;
+    height: 100px;
+    z-index: 2;
+    @extend %for-blocks;
+    transition: .2s;
+    background-color: aliceblue;
 }
 
 .profile__elements {

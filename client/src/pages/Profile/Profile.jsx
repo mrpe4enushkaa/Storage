@@ -1,5 +1,5 @@
-import React, { useLayoutEffect, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useLayoutEffect, useEffect, useState, useRef } from 'react';
+import { useBlocker, useNavigate } from 'react-router-dom';
 import Background from '../../components/UI/Background/Background';
 import "./Profile.scss";
 import ProfileIcon from '../../images/Profile.svg?react';
@@ -12,6 +12,7 @@ export default function Profile() {
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
+    const positionBlockInfo = useRef(null);
 
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
@@ -80,21 +81,30 @@ export default function Profile() {
         }
     }
 
+    const handleInfo = (e, last) => {
+        const pos = e.target.getBoundingClientRect();
+
+        if (e.target.tagName === 'svg') {
+            const rect = positionBlockInfo.current;
+            last !== undefined ? rect.style.top = `${pos.top - 50}px` : rect.style.top = `${pos.top - 30}px`;
+        }
+    }
+
     return (
         <>
             <Background />
             <div className='wrapper'>
-                <div className='profile'>
+                <main className='profile'>
+                    <section className='profile__elements'></section>
                     <aside className='profile__aside'>
-                        <ProfileIcon className='icon-profile' />
-                        <FilesIcon className='icon-profile' />
-                        <SettingsIcon className='icon-profile' />
-                        <LogoutIcon className='icon-profile' />
-                    </aside>
-                    <div className='profile__elements'>
+                        <ProfileIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
+                        <FilesIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
+                        <SettingsIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
+                        <LogoutIcon className='icon-profile' onMouseOver={(e) => handleInfo(e, true)} />
 
-                    </div>
-                </div>
+                        <div className='info-block' ref={positionBlockInfo}></div>
+                    </aside>
+                </main>
             </div>
         </>
     );
