@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../../images/Profile.svg?react';
 import FilesIcon from '../../../images/Files.svg?react';
@@ -13,6 +13,7 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
     const hamburgerButton = useRef(null);
     const closeButton = useRef(null);
     const indicator = useRef(null);
+    const [barIsOpen, serBarIsOpen] = useState(false);
 
     const handleLogout = async () => {
         const response = await fetch("http://localhost:3000/api/logout", {
@@ -38,15 +39,15 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
     };
 
     const handleClickIcon = (e) => {
+        console.log(e.target)
+
         const pos = e.target.getBoundingClientRect();
+        console.log(pos)
         indicator.current.style.top = `${pos.top - 18}px`;
+
     }
 
     const handleBlock = (type) => {
-        // const user = userBlock.current.style.display;
-        // const files = filesBlock.current.style.display;
-        // const settings = settingsBlock.current.style.display;
-
         switch (type) {
             case "user":
                 userBlock.current.style.display = "flex";
@@ -72,30 +73,30 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
     return (
         <aside className='profile__aside'>
             <div className='indicator' ref={indicator}></div>
-            <div className='conteiner-icon'>
+            <nav className='conteiner-icon'>
                 <div ref={hamburgerButton} onClick={handleOpenBar} >
                     <HamburgerIcon className='icon icon--hamburger' />
                 </div>
-                <div style={{ display: "none" }} ref={closeButton} onClick={handleCloseBar}>
+                <div ref={closeButton} onClick={handleCloseBar} style={{ display: "none" }} >
                     <CloseIcon className='icon icon--close' />
                 </div>
-            </div>
-            <div className='conteiner-icon' >
-                <ProfileIcon className='icon icon--profile' onClick={(e) => { handleClickIcon(e); handleBlock("user") }} />
+            </nav>
+            <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("user"); }}>
+                <ProfileIcon className='icon icon--profile' />
                 <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Profile</span>
-            </div>
-            <div className='conteiner-icon' >
-                <FilesIcon className='icon icon--files' onClick={(e) => {handleClickIcon(e); handleBlock("files")}} />
+            </nav>
+            <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("files"); }}>
+                <FilesIcon className='icon icon--files' />
                 <span className='font-regular' style={{ fontSize: "1.5rem", marginLeft: "3px", userSelect: 'none' }}>Files</span>
-            </div>
-            <div className='conteiner-icon' >
-                <SettingsIcon className='icon icon--settings' onClick={(e) => {handleClickIcon(e); handleBlock("settings")}} />
+            </nav>
+            <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("settings"); }}>
+                <SettingsIcon className='icon icon--settings' />
                 <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Settings</span>
-            </div>
-            <div className='conteiner-icon' >
-                <LogoutIcon className='icon icon--logout' onClick={handleLogout} />
+            </nav>
+            <nav className='conteiner-icon' onClick={handleLogout}>
+                <LogoutIcon className='icon icon--logout' />
                 <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Logout</span>
-            </div>
+            </nav>
 
             {/* <div className='info-block' ref={positionBlockInfo}></div> */}
         </aside>

@@ -13,8 +13,6 @@
 %icons {
     width: 54px;
     height: 54px;
-    z-index: 1;
-    cursor: pointer;
 
     path {
         stroke-width: 3px;
@@ -48,8 +46,8 @@
 }
 
 .profile__aside {
+    padding: 1rem 0;
     grid-area: profile__aside;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -77,11 +75,15 @@
 }
 
 .conteiner-icon {
+    padding: 0 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-wrap: nowrap;
     column-gap: 25px;
+    cursor: pointer;
+    position: relative;
+    width: 160px;
 
     .icon--hamburger {
         width: 46px;
@@ -125,6 +127,14 @@
             stroke-width: 2.3px;
         }
     }
+}
+
+
+.conteiner-icon:nth-of-type(n+2)::after{
+    content: "";
+    width: 94%;
+    height: 100%;
+    position: absolute;
 }
 
 .conteiner-icon:last-child {
