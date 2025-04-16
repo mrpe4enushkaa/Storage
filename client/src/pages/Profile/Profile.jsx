@@ -1,18 +1,16 @@
 import React, { useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { useBlocker, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Background from '../../components/UI/Background/Background';
+import AsideBar from './components/AsideBar';
 import "./Profile.scss";
-import ProfileIcon from '../../images/Profile.svg?react';
-import FilesIcon from '../../images/Files.svg?react';
-import SettingsIcon from '../../images/Settings.svg?react';
-import LogoutIcon from '../../images/Logout.svg?react';
 
 export default function Profile() {
     const [userData, setUserData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
-    const positionBlockInfo = useRef(null);
+
+    const bar = useRef(null);
 
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
@@ -41,23 +39,13 @@ export default function Profile() {
                 body: JSON.stringify({
                     id_user: userData?.decoded?.id
                 })
-            }).then(response => response.json())
+            })
+                .then(response => response.json())
                 .then(data => setDocuments(data));
         }
     }, [isDataLoaded, userData]);
 
     document.title = "Profile";
-
-    const handleExit = async () => {
-        const response = await fetch("http://localhost:3000/api/logout", {
-            method: "GET",
-            credentials: "include"
-        });
-
-        const result = await response.json();
-
-        result ? navigate("/") : console.error("Something wrone");
-    }
 
     const handleAddDocument = async (type_data) => {
         if (isDataLoaded && userData?.decoded?.id) {
@@ -81,29 +69,18 @@ export default function Profile() {
         }
     }
 
-    const handleInfo = (e, last) => {
-        const pos = e.target.getBoundingClientRect();
-
-        if (e.target.tagName === 'svg') {
-            const rect = positionBlockInfo.current;
-            last !== undefined ? rect.style.top = `${pos.top - 50}px` : rect.style.top = `${pos.top - 30}px`;
-        }
-    }
-
     return (
         <>
             <Background />
             <div className='wrapper'>
-                <main className='profile'>
-                    <section className='profile__elements'></section>
-                    <aside className='profile__aside'>
-                        <ProfileIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
-                        <FilesIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
-                        <SettingsIcon className='icon-profile' onMouseOver={(e) => handleInfo(e)} />
-                        <LogoutIcon className='icon-profile' onMouseOver={(e) => handleInfo(e, true)} />
-
-                        <div className='info-block' ref={positionBlockInfo}></div>
-                    </aside>
+                <main className='profile' ref={bar}>
+                    <section className='profile__elements'>
+                        <section className='profile__user'>
+                            <div></div>
+                            <span className='font-regular'>Nickname</span>
+                        </section>
+                    </section>
+                    <AsideBar bar={bar} />
                 </main>
             </div>
         </>
