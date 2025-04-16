@@ -147,3 +147,15 @@
 
     @extend %blocks-styles;
 }
+
+.profile__user {
+    display: flex;
+}
+
+.profile__files {
+    display: none;
+}
+
+.profile__settings {
+    display: none;
+}

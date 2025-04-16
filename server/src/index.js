@@ -36,7 +36,7 @@ const connection = mysql.createConnection({
 
 async function checkUser(username, password) {
     return new Promise((resolve, reject) => {
-        connection.query("SELECT id_user, password FROM users WHERE username = ?", [username], async (error, result) => {
+        connection.query("SELECT id_user, password, email FROM users WHERE username = ?", [username], async (error, result) => {
             if (error) {
                 console.log(error);
                 return reject(false);
@@ -46,9 +46,9 @@ async function checkUser(username, password) {
                 const hashedPassword = result[0].password;
                 const match = await bcrypt.compare(password, hashedPassword);
 
-                return resolve({ match, id: result[0].id_user });
+                return resolve({ match, id: result[0].id_user, email: result[0].email});
             } else {
-                return resolve({ match: false, id: null });
+                return resolve({ match: false, id: null, email: null });
             }
         });
     });
@@ -90,10 +90,10 @@ const rightsMiddleware = (req, res, next) => {
 
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
-    const { match, id } = await checkUser(username, password);
+    const { match, id, email } = await checkUser(username, password);
 
     if (match) {
-        const token = jwt.sign({ id, username }, SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id, username, email }, SECRET_KEY, { expiresIn: "1h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,
@@ -113,7 +113,7 @@ app.post("/api/addUser", async (req, res) => {
     const { add, id } = await addUser(email, username, password);
 
     if (add) {
-        const token = jwt.sign({ id, username }, process.env.SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id, username, email }, process.env.SECRET_KEY, { expiresIn: "1h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,

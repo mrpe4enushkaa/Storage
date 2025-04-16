@@ -10,7 +10,11 @@ export default function Profile() {
     const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
 
-    const bar = useRef(null);
+    const barBlock = useRef(null);
+
+    const userBlock = useRef(null);
+    const filesBlock = useRef(null);
+    const settingsBlock = useRef(null);
 
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
@@ -73,14 +77,47 @@ export default function Profile() {
         <>
             <Background />
             <div className='wrapper'>
-                <main className='profile' ref={bar}>
+                <main className='profile' ref={barBlock}>
                     <section className='profile__elements'>
-                        <section className='profile__user'>
-                            <div></div>
-                            <span className='font-regular'>Nickname</span>
+                        <section className='profile__user' ref={userBlock} style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            height: "100%"
+                        }}>
+                            <div style={{
+                                width: "320px",
+                                height: "320px",
+                                borderRadius: "50%",
+                                backgroundColor: "#fff",
+                            }}></div>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column"
+                            }}>
+                                <span className='font-regular' style={{
+                                    fontSize: "64px",
+                                    marginLeft: "100px"
+                                }}>{userData?.decoded?.username}</span>
+                                <span className='font-regular' style={{
+                                    fontSize: "40px",
+                                    marginLeft: "100px"
+                                }}>{userData?.decoded?.email}</span>
+                            </div>
+                        </section>
+                        <section className='profile__files' ref={filesBlock}>
+                            <span>files</span>
+                        </section>
+                        <section className='profile__settings' ref={settingsBlock}>
+                            <span>settings</span>
                         </section>
                     </section>
-                    <AsideBar bar={bar} />
+                    <AsideBar
+                        barBlock={barBlock}
+                        userBlock={userBlock}
+                        filesBlock={filesBlock}
+                        settingsBlock={settingsBlock}
+                    />
                 </main>
             </div>
         </>
