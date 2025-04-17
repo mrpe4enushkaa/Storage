@@ -27,44 +27,40 @@ export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock
     }
 
     const handleOpenBar = () => {
-        profile.current.classList.add("profile--open");
-        hamburgerButton.current.style.display = 'none';
-        closeButton.current.style.display = 'block';
-    };
+        profile.current.classList.add("open");
+        hamburgerButton.current.classList.add("hidden");
+        closeButton.current.classList.remove("hidden");
+    }
 
     const handleCloseBar = () => {
-        profile.current.classList.remove("profile--open");
-        hamburgerButton.current.style.display = 'block';
-        closeButton.current.style.display = 'none';
-    };
+        profile.current.classList.remove("open");
+        hamburgerButton.current.classList.remove("hidden");
+        closeButton.current.classList.add("hidden");
+    }
 
     const handleClickIcon = (e) => {
-        console.log(e.target)
-
         const pos = e.target.getBoundingClientRect();
-        console.log(pos)
         indicator.current.style.top = `${pos.top - 18}px`;
-
     }
 
     const handleBlock = (type) => {
-        userBlock.current.style.display = "none";
-        filesBlock.current.style.display = "none";
-        settingsBlock.current.style.display = "none";
-        toolbar.current.style.display = "none";
-        profile.current.classList.remove("profile--files");
+        userBlock.current.classList.add("hidden");
+        filesBlock.current.classList.add("hidden");
+        settingsBlock.current.classList.add("hidden");
+        profile.current.classList.remove("files");
+        toolbar.current.classList.remove("open");
 
         switch (type) {
             case "user":
-                userBlock.current.style.display = "flex";
+                userBlock.current.classList.remove("hidden");
                 break;
             case "files":
-                filesBlock.current.style.display = "flex";
-                toolbar.current.style.display = "block";
-                profile.current.classList.add("profile--files");
+                filesBlock.current.classList.remove("hidden");
+                toolbar.current.classList.add("open");
+                profile.current.classList.add("files");
                 break;
             case "settings":
-                settingsBlock.current.style.display = "flex";
+                settingsBlock.current.classList.remove("hidden");
                 break;
             default:
                 console.error("Wrone type...");
@@ -76,10 +72,10 @@ export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock
         <aside className='profile__aside'>
             <div className='indicator' ref={indicator}></div>
             <nav className='conteiner-icon'>
-                <div ref={hamburgerButton} onClick={handleOpenBar} >
+                <div className='conteiner-button' ref={hamburgerButton} onClick={handleOpenBar} >
                     <HamburgerIcon className='icon icon--hamburger' />
                 </div>
-                <div ref={closeButton} onClick={handleCloseBar} style={{ display: "none" }} >
+                <div className='conteiner-button hidden' ref={closeButton} onClick={handleCloseBar} >
                     <CloseIcon className='icon icon--close' />
                 </div>
             </nav>

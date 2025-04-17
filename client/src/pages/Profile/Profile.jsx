@@ -81,12 +81,7 @@ export default function Profile() {
             <div className='wrapper'>
                 <main className='profile' ref={profile}>
                     <section className='profile__elements'>
-                        <section className='profile__user' ref={userBlock} style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            height: "100%"
-                        }}>
+                        <section className='profile__user' ref={userBlock}>
                             <div style={{
                                 width: "320px",
                                 height: "320px",
@@ -107,10 +102,10 @@ export default function Profile() {
                                 }}>{userData?.decoded?.email}</span>
                             </div>
                         </section>
-                        <section className='profile__files' ref={filesBlock}>
+                        <section className='profile__files hidden' ref={filesBlock}>
                             <span>files</span>
                         </section>
-                        <section className='profile__settings' ref={settingsBlock}>
+                        <section className='profile__settings hidden' ref={settingsBlock}>
                             <span>settings</span>
                         </section>
                     </section>
