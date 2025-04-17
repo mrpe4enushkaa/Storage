@@ -7,13 +7,13 @@ import LogoutIcon from '../../../images/Logout.svg?react';
 import HamburgerIcon from "../../../images/Hamburger.svg?react";
 import CloseIcon from "../../../images/Close.svg?react";
 
-export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBlock }) {
+export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock, toolbar }) {
     const navigate = useNavigate();
     // const positionBlockInfo = useRef(null);
     const hamburgerButton = useRef(null);
     const closeButton = useRef(null);
     const indicator = useRef(null);
-    const [barIsOpen, serBarIsOpen] = useState(false);
+    const [barIsOpen, serBarIsOpen] = useState(false); //need to open or close popub under files icon
 
     const handleLogout = async () => {
         const response = await fetch("http://localhost:3000/api/logout", {
@@ -27,13 +27,13 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
     }
 
     const handleOpenBar = () => {
-        barBlock.current.classList.add("profile--open");
+        profile.current.classList.add("profile--open");
         hamburgerButton.current.style.display = 'none';
         closeButton.current.style.display = 'block';
     };
 
     const handleCloseBar = () => {
-        barBlock.current.classList.remove("profile--open");
+        profile.current.classList.remove("profile--open");
         hamburgerButton.current.style.display = 'block';
         closeButton.current.style.display = 'none';
     };
@@ -48,20 +48,22 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
     }
 
     const handleBlock = (type) => {
+        userBlock.current.style.display = "none";
+        filesBlock.current.style.display = "none";
+        settingsBlock.current.style.display = "none";
+        toolbar.current.style.display = "none";
+        profile.current.classList.remove("profile--files");
+
         switch (type) {
             case "user":
                 userBlock.current.style.display = "flex";
-                filesBlock.current.style.display = "none";
-                settingsBlock.current.style.display = "none";
                 break;
             case "files":
-                userBlock.current.style.display = "none";
                 filesBlock.current.style.display = "flex";
-                settingsBlock.current.style.display = "none";
+                toolbar.current.style.display = "block";
+                profile.current.classList.add("profile--files");
                 break;
             case "settings":
-                userBlock.current.style.display = "none";
-                filesBlock.current.style.display = "none";
                 settingsBlock.current.style.display = "flex";
                 break;
             default:
@@ -83,19 +85,19 @@ export default function AsideBar({ barBlock, userBlock, filesBlock, settingsBloc
             </nav>
             <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("user"); }}>
                 <ProfileIcon className='icon icon--profile' />
-                <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Profile</span>
+                <span className='font-regular conteiner-icon__text'>Profile</span>
             </nav>
             <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("files"); }}>
                 <FilesIcon className='icon icon--files' />
-                <span className='font-regular' style={{ fontSize: "1.5rem", marginLeft: "3px", userSelect: 'none' }}>Files</span>
+                <span className='font-regular conteiner-icon__text' style={{ fontSize: "1.5rem", marginLeft: "3px", userSelect: 'none' }}>Files</span>
             </nav>
             <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("settings"); }}>
                 <SettingsIcon className='icon icon--settings' />
-                <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Settings</span>
+                <span className='font-regular conteiner-icon__text' >Settings</span>
             </nav>
             <nav className='conteiner-icon' onClick={handleLogout}>
                 <LogoutIcon className='icon icon--logout' />
-                <span className='font-regular' style={{ fontSize: "1.5rem", userSelect: 'none' }}>Logout</span>
+                <span className='font-regular conteiner-icon__text'>Logout</span>
             </nav>
 
             {/* <div className='info-block' ref={positionBlockInfo}></div> */}

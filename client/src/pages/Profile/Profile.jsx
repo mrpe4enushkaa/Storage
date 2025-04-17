@@ -10,11 +10,13 @@ export default function Profile() {
     const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
 
-    const barBlock = useRef(null);
+    const profile = useRef(null);
 
     const userBlock = useRef(null);
     const filesBlock = useRef(null);
     const settingsBlock = useRef(null);
+
+    const toolbar = useRef(null);
 
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
@@ -77,7 +79,7 @@ export default function Profile() {
         <>
             <Background />
             <div className='wrapper'>
-                <main className='profile' ref={barBlock}>
+                <main className='profile' ref={profile}>
                     <section className='profile__elements'>
                         <section className='profile__user' ref={userBlock} style={{
                             display: "flex",
@@ -113,11 +115,13 @@ export default function Profile() {
                         </section>
                     </section>
                     <AsideBar
-                        barBlock={barBlock}
+                        profile={profile}
                         userBlock={userBlock}
                         filesBlock={filesBlock}
                         settingsBlock={settingsBlock}
+                        toolbar={toolbar}
                     />
+                    <div className='profile__toolbar' ref={toolbar}></div>
                 </main>
             </div>
         </>
