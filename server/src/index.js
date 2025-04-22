@@ -93,13 +93,13 @@ app.post("/api/checkUser", async (req, res) => {
     const { match, id, email } = await checkUser(username, password);
 
     if (match) {
-        const token = jwt.sign({ id, username, email }, SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id, username, email }, SECRET_KEY, { expiresIn: "24h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,
             secure: false,
             sameSite: "lax",
-            maxAge: 3600000
+            maxAge: 3600000 * 24
         });
 
         res.status(200).json({ "user": true });
@@ -113,13 +113,13 @@ app.post("/api/addUser", async (req, res) => {
     const { add, id } = await addUser(email, username, password);
 
     if (add) {
-        const token = jwt.sign({ id, username, email }, process.env.SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id, username, email }, process.env.SECRET_KEY, { expiresIn: "24h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,
             secure: false,
             sameSite: "lax",
-            maxAge: 3600000
+            maxAge: 3600000 * 24
         });
 
         res.status(200).json({ "add": true });

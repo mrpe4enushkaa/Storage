@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Background from '../../components/UI/Background/Background';
 import AsideBar from './components/AsideBar';
+import ProfileUser from './components/ProfileUser';
 import "./Profile.scss";
 
 export default function Profile() {
@@ -18,6 +19,8 @@ export default function Profile() {
 
     const toolbar = useRef(null);
 
+    document.title = "Profile";
+
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
             method: "GET",
@@ -32,7 +35,7 @@ export default function Profile() {
 
     useEffect(() => {
         if (isDataLoaded && (!userData?.rights || !userData?.decoded?.id)) {
-            navigate("/");
+            navigate("/error");
         }
     }, [isDataLoaded, userData]);
 
@@ -50,8 +53,6 @@ export default function Profile() {
                 .then(data => setDocuments(data));
         }
     }, [isDataLoaded, userData]);
-
-    document.title = "Profile";
 
     const handleAddDocument = async (type_data) => {
         if (isDataLoaded && userData?.decoded?.id) {
@@ -80,32 +81,12 @@ export default function Profile() {
             <Background />
             <div className='wrapper'>
                 <main className='profile' ref={profile}>
-                    <section className='profile__elements'>
-                        <section className='profile__user' ref={userBlock}>
-                            <div style={{
-                                width: "320px",
-                                height: "320px",
-                                borderRadius: "50%",
-                                backgroundColor: "#fff",
-                            }}></div>
-                            <div style={{
-                                display: "flex",
-                                flexDirection: "column"
-                            }}>
-                                <span className='font-regular' style={{
-                                    fontSize: "64px",
-                                    marginLeft: "100px"
-                                }}>{userData?.decoded?.username}</span>
-                                <span className='font-regular' style={{
-                                    fontSize: "40px",
-                                    marginLeft: "100px"
-                                }}>{userData?.decoded?.email}</span>
-                            </div>
-                        </section>
-                        <section className='profile__files hidden' ref={filesBlock}>
+                    <section className='profile--elements'>
+                        <ProfileUser userData={userData} userBlock={userBlock} />
+                        <section className='profile--files hidden' ref={filesBlock}>
                             <span>files</span>
                         </section>
-                        <section className='profile__settings hidden' ref={settingsBlock}>
+                        <section className='profile--settings hidden' ref={settingsBlock}>
                             <span>settings</span>
                         </section>
                     </section>
@@ -116,7 +97,7 @@ export default function Profile() {
                         settingsBlock={settingsBlock}
                         toolbar={toolbar}
                     />
-                    <div className='profile__toolbar' ref={toolbar}></div>
+                    <div className='profile--toolbar' ref={toolbar}></div>
                 </main>
             </div>
         </>

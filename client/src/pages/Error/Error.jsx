@@ -7,7 +7,7 @@ export default function Error() {
     return (
         <>
             <span>Error 404</span>
-            <button onClick={() => navigate(-1)}>Back</button >
+            <button onClick={() => navigate("/")}>Back</button >
         </>
     );
 }
