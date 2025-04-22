@@ -37,21 +37,71 @@ export default function ProfileUser({ userData, userBlock }) {
             </div>
             <div className="profile--user__about">
                 <div className="profile--user__about--statistics">
-                    <span className="font-regular profile--user__about--text" style={{marginBottom: "10px"}}>Stored</span>
+                    <span className="font-regular profile--user__about--name" style={{ marginBottom: "10px" }}>Stored</span>
                     <div>
                         {/* <div style={{display: "flex", alignItems: "center"}}>
                             <div style={{ width: "10px", height: "10px", borderRadius: "100px", backgroundColor: "#fff" }}></div>
                             <div ref={textBar} style={{ position: "relative", width: "10px", height: "10px", borderRadius: "100px", backgroundColor: "#545454" }}></div>
                         </div> */}
                         <nav className="profile--user__about--repository">
-                            <nav style={{ width: "90%" }} ref={progressBar} className="profile--user__about--repository-progress"></nav>
+                            <nav style={{ width: "60%" }} ref={progressBar} className="profile--user__about--repository-progress"></nav>
                             {/* style={{width : "процент = кол-во 1 * 100 / сумма 2 кол-в"}} */}
                         </nav>
                         <div style={{ display: "flex", alignItems: "center", columnGap: "5px", marginTop: "5px" }}>
                             <div style={{ width: "10px", height: "10px", borderRadius: "100px", backgroundColor: "#fff" }}></div>
-                            <span className="font-regular" style={{marginRight: "20px"}}>Password(s)</span>
+                            <span className="font-regular" style={{ marginRight: "20px" }}>Password(s)</span>
                             <div style={{ width: "10px", height: "10px", borderRadius: "100px", backgroundColor: "#545454" }}></div>
                             <span className="font-regular">Document(s)</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="profile--user__about--activities">
+                    <span className="font-regular profile--user__about--name">Account activity</span>
+                    <div className="profile--user__about--blocks">
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">Added new password "Password_1"</span>
+                            <span className="font-regular">10.02.2025</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">Added new password "Password_1"</span>
+                            <span className="font-regular">10.02.2025</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">Added new password "Password_1"</span>
+                            <span className="font-regular">10.02.2025</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">Added new password "Password_1"</span>
+                            <span className="font-regular">10.02.2025</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">Added new password "Password_1"</span>
+                            <span className="font-regular">10.02.2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="profile--user__about--history">
+                    <span className="font-regular profile--user__about--name">Entry history</span>
+                    <div className="profile--user__about--blocks">
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">213.1.2.49:2001</span>
+                            <span className="font-regular">19.05.2024</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">213.1.2.49:2001</span>
+                            <span className="font-regular">19.05.2024</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">213.1.2.49:2001</span>
+                            <span className="font-regular">19.05.2024</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">213.1.2.49:2001</span>
+                            <span className="font-regular">19.05.2024</span>
+                        </div>
+                        <div className="profile--user__about--block">
+                            <span className="font-regular">213.1.2.49:2001</span>
+                            <span className="font-regular">19.05.2024</span>
                         </div>
                     </div>
                 </div>
