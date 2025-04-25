@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileIcon from '../../../images/Profile.svg?react';
-import FilesIcon from '../../../images/Files.svg?react';
+import FolderIcon from '../../../images/Folder.svg?react';
 import SettingsIcon from '../../../images/Settings.svg?react';
 import LogoutIcon from '../../../images/Logout.svg?react';
 import HamburgerIcon from "../../../images/Hamburger.svg?react";
@@ -84,7 +84,7 @@ export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock
                 <span className='font-regular conteiner-icon__text'>Profile</span>
             </nav>
             <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("files"); }}>
-                <FilesIcon className='icon icon--files' />
+                <FolderIcon className='icon icon--folder' />
                 <span className='font-regular conteiner-icon__text' style={{ fontSize: "1.5rem", marginLeft: "3px", userSelect: 'none' }}>Files</span>
             </nav>
             <nav className='conteiner-icon' onClick={(e) => { handleClickIcon(e); handleBlock("settings"); }}>

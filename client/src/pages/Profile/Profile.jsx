@@ -1,9 +1,15 @@
-import React, { useLayoutEffect, useEffect, useState, useRef } from 'react';
+import React, { useLayoutEffect, useEffect, useState, useRef, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Background from '../../components/UI/Background/Background';
 import AsideBar from './components/AsideBar';
 import ProfileUser from './components/ProfileUser';
+import ProfileFiles from './components/ProfileFiles';
+import LoopIcon from "../../images/Loop.svg?react";
+import AddFolderIcon from "../../images/AddFolder.svg?react";
+import AddFileIcon from "../../images/AddFile.svg?react";
 import "./Profile.scss";
+import ProfileSettings from './components/ProfileSettings';
+import { UserContext } from './context/UserContext';
 
 export default function Profile() {
     const [userData, setUserData] = useState({});
@@ -82,13 +88,13 @@ export default function Profile() {
             <div className='wrapper'>
                 <main className='profile' ref={profile}>
                     <section className='profile--elements'>
-                        <ProfileUser userData={userData} userBlock={userBlock} />
-                        <section className='profile--files hidden' ref={filesBlock}>
-                            <span>files</span>
-                        </section>
-                        <section className='profile--settings hidden' ref={settingsBlock}>
-                            <span>settings</span>
-                        </section>
+                        {isDataLoaded && (
+                            <UserContext.Provider value={userData}>
+                                <ProfileUser userData={userData} userBlock={userBlock} />
+                                <ProfileFiles filesBlock={filesBlock} />
+                                <ProfileSettings settingsBlock={settingsBlock} />
+                            </UserContext.Provider>
+                        )}
                     </section>
                     <AsideBar
                         profile={profile}
@@ -97,7 +103,12 @@ export default function Profile() {
                         settingsBlock={settingsBlock}
                         toolbar={toolbar}
                     />
-                    <div className='profile--toolbar' ref={toolbar}></div>
+                    <div className='profile__toolbar' ref={toolbar}>
+                        <input type="text" placeholder='my_file...' className='profile__toolbar--input-search' />
+                        <LoopIcon className="icon icon--search" />
+                        <AddFolderIcon className="icon icon--add-folder" />
+                        <AddFileIcon className="icon icon--add-file" />
+                    </div>
                 </main>
             </div>
         </>

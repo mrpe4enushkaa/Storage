@@ -5,6 +5,7 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const os = require("os");
 require("dotenv").config({ path: "./.env" });
 
 app.use(express.json());
@@ -46,7 +47,7 @@ async function checkUser(username, password) {
                 const hashedPassword = result[0].password;
                 const match = await bcrypt.compare(password, hashedPassword);
 
-                return resolve({ match, id: result[0].id_user, email: result[0].email});
+                return resolve({ match, id: result[0].id_user, email: result[0].email });
             } else {
                 return resolve({ match: false, id: null, email: null });
             }
@@ -86,6 +87,18 @@ const rightsMiddleware = (req, res, next) => {
     req.data = { rights: true, decoded };
 
     next();
+}
+
+const getIp = () => {
+    const interfaces = os.networkInterfaces();
+
+    for (const listInterfaces of Object.values(interfaces)) {
+        for (const interface of listInterfaces) {
+            if (interface.family === "IPv4" && !interface.internal) {
+                return interface.address;
+            }
+        }
+    }
 }
 
 app.post("/api/checkUser", async (req, res) => {
@@ -140,13 +153,13 @@ app.get("/api/logout", (req, res) => {
 app.post("/api/getDocuments", (req, res) => {
     const { id_user } = req.body;
 
-    console.log(id_user);
-    res.json({ "message": "hello" })
+    res.json({ "message": "hello" });
+    console.log(getIp());
 });
 
 app.post("/api/addDocument", (req, res) => {
-    const {id_user, type_data} = req.body;
-    
+    const { id_user, type_data } = req.body;
+
     console.log(id_user, type_data);
 });
 
