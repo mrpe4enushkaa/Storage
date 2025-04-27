@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "./.env" });
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -6,7 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const os = require("os");
-require("dotenv").config({ path: "./.env" });
+const multer = require("multer");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -35,6 +36,38 @@ const connection = mysql.createConnection({
     database: 'storage'
 });
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/")
+    },
+    filename: (req, file, cb) => {
+        const salt = Date.now() + "-" + Math.round(Math.random() + 1E9);
+        cb(null, salt + "-" + file.originalname)
+    }
+});
+
+const upload = multer({ storage });
+
+
+const rightsMiddleware = (req, res, next) => {
+    const token = req.cookies.jwt;
+
+    if (!token) {
+        return res.json({ "rights": false });
+    }
+
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.data = { rights: true, decoded };
+
+    next();
+}
+
+app.get("/api/rights", rightsMiddleware, (req, res) => {
+    res.json({ "data": req.data });
+});
+
+
+//identification start
 async function checkUser(username, password) {
     return new Promise((resolve, reject) => {
         connection.query("SELECT id_user, password, email FROM users WHERE username = ?", [username], async (error, result) => {
@@ -53,52 +86,6 @@ async function checkUser(username, password) {
             }
         });
     });
-}
-
-async function addUser(email, username, password) {
-    const hashPassword = await bcrypt.hash(password, 15);
-    return new Promise((resolve, reject) => {
-        connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
-            if (error) {
-                return resolve({ add: false, id: null });
-            }
-
-            if (result) {
-                connection.query("SELECT id_user FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
-                    if (error) {
-                        return reject({ add: false, id: null });
-                    }
-
-                    return resolve({ add: true, id: result[0].id_user });
-                });
-            }
-        });
-    });
-}
-
-const rightsMiddleware = (req, res, next) => {
-    const token = req.cookies.jwt;
-
-    if (!token) {
-        return res.json({ "rights": false });
-    }
-
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.data = { rights: true, decoded };
-
-    next();
-}
-
-const getIp = () => {
-    const interfaces = os.networkInterfaces();
-
-    for (const listInterfaces of Object.values(interfaces)) {
-        for (const interface of listInterfaces) {
-            if (interface.family === "IPv4" && !interface.internal) {
-                return interface.address;
-            }
-        }
-    }
 }
 
 app.post("/api/checkUser", async (req, res) => {
@@ -121,6 +108,28 @@ app.post("/api/checkUser", async (req, res) => {
     }
 });
 
+
+async function addUser(email, username, password) {
+    const hashPassword = await bcrypt.hash(password, 15);
+    return new Promise((resolve, reject) => {
+        connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
+            if (error) {
+                return resolve({ add: false, id: null });
+            }
+
+            if (result) {
+                connection.query("SELECT id_user FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
+                    if (error) {
+                        return reject({ add: false, id: null });
+                    }
+
+                    return resolve({ add: true, id: result[0].id_user });
+                });
+            }
+        });
+    });
+}
+
 app.post("/api/addUser", async (req, res) => {
     const { email, username, password } = req.body;
     const { add, id } = await addUser(email, username, password);
@@ -140,15 +149,27 @@ app.post("/api/addUser", async (req, res) => {
         res.status(401).json({ "add": false });
     }
 });
+//identification end
 
-app.get("/api/rights", rightsMiddleware, (req, res) => {
-    res.json({ "data": req.data });
-});
 
+//profile start
 app.get("/api/logout", (req, res) => {
     res.clearCookie("jwt");
     res.json({ "exit": true })
 });
+
+
+const getIp = () => {
+    const interfaces = os.networkInterfaces();
+
+    for (const listInterfaces of Object.values(interfaces)) {
+        for (const interface of listInterfaces) {
+            if (interface.family === "IPv4" && !interface.internal) {
+                return interface.address;
+            }
+        }
+    }
+}
 
 app.post("/api/getDocuments", (req, res) => {
     const { id_user } = req.body;
@@ -157,11 +178,13 @@ app.post("/api/getDocuments", (req, res) => {
     console.log(getIp());
 });
 
-app.post("/api/addDocument", (req, res) => {
-    const { id_user, type_data } = req.body;
 
-    console.log(id_user, type_data);
+app.post("/api/addDocument", upload.array("files"), (req, res) => {
+    const file = req.file;
+    const name = req.body.name;
+    console.log(`line: 170; \n ${file} \n ${name}`);
 });
+//profile end
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);

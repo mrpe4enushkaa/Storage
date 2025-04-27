@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/mrpe4enushkaa/Storage/issues"
   },
-  "homepage": "https://github.com/mrpe4enushkaa/Storage#readme"
+  "homepage": "https://github.com/mrpe4enushkaa/Storage#readme",
+  "dependencies": {
+    "multer": "^1.4.5-lts.2"
+  }
 }

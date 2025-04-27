@@ -9,23 +9,37 @@ const connection = mysql.createConnection({
 });
 
 async function table() {
-    return new Promise((resolve, reject) => {
-        const sql = fs.readFileSync('./database/createTable.sql', 'utf8');
-        connection.query(sql, (error, results)=>{
+    const createUsers = new Promise((resolve, reject) => {
+        const sql = fs.readFileSync('./database/createUsersTable.sql', 'utf8');
+        connection.query(sql, (error) => {
             if (error) {
                 console.log("Error: ", error);
                 reject(error);
             }
-
-            connection.end((error)=>{
-                if(error) {
-                    console.log("Error: ", error);
-                    reject(error);
-                }
-
-                resolve(results);
-            });
         });
+    });
+
+    const createDocuments = new Promise((resolve, reject) => {
+        const sql = fs.readFileSync("./database/createDocumentsTable.sql", "utf8");
+        connection.query(sql, (error) => {
+            if (error) {
+                console.log("Error: ", error);
+                reject(error);
+            }
+        })
+    });
+
+    const results = await Promise.all([createUsers, createDocuments]);
+
+    connection.end((error) => {
+        if (error) {
+            console.log("Error: ", error);
+            reject(error);
+        }
+
+        resolve(results);
+
+        return results;
     });
 }
 
