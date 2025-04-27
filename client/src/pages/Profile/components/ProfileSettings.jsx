@@ -63,7 +63,39 @@ export default function ProfileSettings({ settingsBlock }) {
                     </nav>
                 </div>
             </div>
-            <div className="profile--settings__conteiner"></div>
+            <div className="profile--settings__conteiner">
+                <div className="profile--settings__theme">
+                    <span className="font-regular profile--settings__theme--name">Panel placement</span>
+                    <div className="profile--settings__theme--conteiner">
+                        <div className="profile--settings__theme--circle selected">
+                            <div className="panel-placement vertical"></div>
+                        </div>
+                        <div className="profile--settings__theme--circle">
+                        <div className="panel-placement horizontal"></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="profile--settings__theme">
+                    <span className="font-regular profile--settings__theme--name">Languages</span>
+                    <nav className="profile--settings__theme--conteiner">
+                        <div className="profile--settings__theme--circle">
+                            <span className="font-regular">Ru</span>
+                        </div>
+                        <div className="profile--settings__theme--circle selected">
+                            <span className="font-regular">En</span>
+                        </div>
+                        <div className="profile--settings__theme--circle">
+                            <span className="font-regular">De</span>
+                        </div>
+                    </nav>
+                </div>
+                <div className="profile--settings__theme">
+                    <span className="font-regular profile--settings__theme--name">Animations</span>
+                    <nav className="profile--settings__theme--conteiner">
+                        <input type="checkbox" className="profile--settings__theme--checkbox" />
+                    </nav>
+                </div>
+            </div>
         </section>
     );
 }
