@@ -7,7 +7,7 @@ import LogoutIcon from '../../../images/Logout.svg?react';
 import HamburgerIcon from "../../../images/Hamburger.svg?react";
 import CloseIcon from "../../../images/Close.svg?react";
 
-export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock, toolbar }) {
+export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock, toolbar, isFormOpen, handleForm }) {
     const navigate = useNavigate();
     // const positionBlockInfo = useRef(null);
     const hamburgerButton = useRef(null);
@@ -41,6 +41,8 @@ export default function AsideBar({ profile, userBlock, filesBlock, settingsBlock
     const handleClickIcon = (e) => {
         const pos = e.target.getBoundingClientRect();
         indicator.current.style.top = `${pos.top - 18}px`;
+        isFormOpen.current = false;
+        handleForm(false);
     }
 
     const handleBlock = (type) => {

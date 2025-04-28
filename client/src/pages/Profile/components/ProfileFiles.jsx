@@ -14,7 +14,7 @@ export default function ProfileFiles({ filesBlock }) {
             </div>
             <div className="profile--files__file">
                 <FileIcon className="icon icon--file" />
-                <span className="font-regular profile--files__file--text">My-file_1</span>
+                <span className="font-regular profile--files__file--text">ываываываыаваываыпыMy-file_1</span>
                 <MoreIcon className="icon icon--more" />
             </div>
             <div className="profile--files__file">
@@ -39,7 +39,12 @@ export default function ProfileFiles({ filesBlock }) {
             </div>
             <div className="profile--files__file">
                 <FileIcon className="icon icon--file" />
-                <span className="font-regular profile--files__file--text">My-file_1</span>
+                <span className="font-regular profile--files__file--text">My-file_1ывываывавыавыавыывафаыв</span>
+                <MoreIcon className="icon icon--more" />
+            </div>
+            <div className="profile--files__file">
+                <FileIcon className="icon icon--file" />
+                <span className="font-regular profile--files__file--text">My-file_1ывываывавыавыавыывафаыв</span>
                 <MoreIcon className="icon icon--more" />
             </div>
         </section>

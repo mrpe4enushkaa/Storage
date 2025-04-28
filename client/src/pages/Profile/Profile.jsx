@@ -90,10 +90,12 @@ export default function Profile() {
     const isFormOpen = useRef(false);
     let timeout = null;
 
-    const handleForm = () => {
-        isFormOpen.current = !isFormOpen.current;
+    const handleForm = (isProfile) => {
+        if (isProfile) {
+            isFormOpen.current = !isFormOpen.current;
+        }
 
-        if(timeout){
+        if (timeout) {
             clearTimeout(timeout);
             timeout = null;
         }
@@ -113,10 +115,12 @@ export default function Profile() {
             formAdd.current.classList.remove("close");
             profile.current.style.gridTemplateAreas = `        
                 "profile__aside profile__toolbar profile__toolbar"
-                "profile__aside profile__elements add_document"`;
+                "profile__aside profile__elements profile__form"`;
             formAdd.current.style.display = 'block';
         }
     }
+
+    const [isPassword, setIsPassword] = useState(true);
 
     return (
         <>
@@ -138,18 +142,35 @@ export default function Profile() {
                         filesBlock={filesBlock}
                         settingsBlock={settingsBlock}
                         toolbar={toolbar}
+                        isFormOpen={isFormOpen}
+                        handleForm={handleForm}
                     />
                     <div className='profile__toolbar' ref={toolbar}>
                         <input type="text" placeholder='my_file...' className='profile__toolbar--input-search' />
                         <LoopIcon className="icon icon--search" />
                         <AddFolderIcon className="icon icon--add-folder" />
-                        <AddFileIcon className="icon icon--add-file" onClick={handleForm} />
+                        <AddFileIcon className="icon icon--add-file" onClick={() => handleForm(true)} />
                     </div>
 
-                    <form className="add-document close" onSubmit={addDocument} ref={formAdd}>
-                        <input type="text" placeholder="name" onChange={(e) => setName(e.target.value)} />
-                        <input type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files))} />
-                        <button type="submit">submit</button>
+                    <form className="profile__form close" onSubmit={addDocument} ref={formAdd}>
+                        <div className='form__add-document'>
+                            <input type="text" placeholder="name" onChange={(e) => setName(e.target.value)} />
+                            <select id="" defaultValue="password" onChange={(e) => setIsPassword(e.target.value === "password")}>
+                                <option value="password" selected>Password</option>
+                                <option value="document">Document</option>
+                            </select>
+                            {isPassword ? (<>
+                                <input type="text" placeholder='password: *********' />
+                                <button type="submit">submit</button>
+                            </>) : (<>
+                                <input type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files))} />
+                                <button type="submit">submit</button>
+                            </>)}
+                        </div>
+                        {/* <div className='form__add-folder'>
+                            <input type="text" placeholder='name forler' />
+                            <button type="submit">submit</button>
+                        </div> */}
                     </form>
                 </main>
             </div>
