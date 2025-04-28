@@ -22,6 +22,7 @@ export default function Profile() {
     const userBlock = useRef(null);
     const filesBlock = useRef(null);
     const settingsBlock = useRef(null);
+    const formAdd = useRef(null);
 
     const toolbar = useRef(null);
 
@@ -60,25 +61,60 @@ export default function Profile() {
         }
     }, [isDataLoaded, userData]);
 
-    const handleAddDocument = async (type_data) => {
-        if (isDataLoaded && userData?.decoded?.id) {
-            const response = await fetch("http://localhost:3000/api/addDocument", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    id_user: userData?.decoded?.id,
-                    type_data: type_data
-                })
-            })
 
-            const result = await response.json();
 
-            if (result.success) {
-                window.location.reload();
-            } else {
-                console.error("Something wrong...");
-            }
+    const [name, setName] = useState("");
+    const [files, setFiles] = useState([]);
+
+    useEffect(() => { console.log(name) }, [name]);
+    useEffect(() => { console.log(files) }, [files]);
+
+    const addDocument = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append("files", file);
+        });
+        formData.append("name", name);
+
+        const response = await fetch("http://localhost:3000/api/addDocument", {
+            method: "POST",
+            body: formData,
+            credentials: "include"
+        });
+
+        console.log(response);
+    }
+
+    const isFormOpen = useRef(false);
+    let timeout = null;
+
+    const handleForm = () => {
+        isFormOpen.current = !isFormOpen.current;
+
+        if(timeout){
+            clearTimeout(timeout);
+            timeout = null;
+        }
+
+        if (!isFormOpen.current) {
+            profile.current.classList.remove("open-form");
+            formAdd.current.classList.add("close");
+            timeout = setTimeout(() => {
+                profile.current.style.gridTemplateAreas = `        
+                        "profile__aside profile__toolbar profile__toolbar"
+                        "profile__aside profile__elements profile__elements"`;
+                formAdd.current.style.display = 'none';
+                timeout = null;
+            }, 265);
+        } else {
+            profile.current.classList.add("open-form");
+            formAdd.current.classList.remove("close");
+            profile.current.style.gridTemplateAreas = `        
+                "profile__aside profile__toolbar profile__toolbar"
+                "profile__aside profile__elements add_document"`;
+            formAdd.current.style.display = 'block';
         }
     }
 
@@ -107,8 +143,14 @@ export default function Profile() {
                         <input type="text" placeholder='my_file...' className='profile__toolbar--input-search' />
                         <LoopIcon className="icon icon--search" />
                         <AddFolderIcon className="icon icon--add-folder" />
-                        <AddFileIcon className="icon icon--add-file" />
+                        <AddFileIcon className="icon icon--add-file" onClick={handleForm} />
                     </div>
+
+                    <form className="add-document close" onSubmit={addDocument} ref={formAdd}>
+                        <input type="text" placeholder="name" onChange={(e) => setName(e.target.value)} />
+                        <input type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files))} />
+                        <button type="submit">submit</button>
+                    </form>
                 </main>
             </div>
         </>
