@@ -10,11 +10,12 @@ import AddFileIcon from "../../images/AddFile.svg?react";
 import "./Profile.scss";
 import ProfileSettings from './components/ProfileSettings';
 import { UserContext } from './context/UserContext';
+import FormAdd from './components/FormAdd';
 
 export default function Profile() {
     const [userData, setUserData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    const [documents, setDocuments] = useState({});
+    // const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
 
     const profile = useRef(null);
@@ -40,51 +41,67 @@ export default function Profile() {
             })
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (isDataLoaded && (!userData?.rights || !userData?.decoded?.id)) {
             navigate("/error");
         }
     }, [isDataLoaded, userData]);
 
-    useLayoutEffect(() => {
-        if (isDataLoaded && userData?.decoded?.id) {
-            fetch("http://localhost:3000/api/getDocuments", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    id_user: userData?.decoded?.id
-                })
-            })
-                .then(response => response.json())
-                .then(data => setDocuments(data));
-        }
-    }, [isDataLoaded, userData]);
+    // useLayoutEffect(() => {
+    //     if (isDataLoaded && userData?.decoded?.id) {
+    //         fetch("http://localhost:3000/api/getDocuments", {
+    //             method: "POST",
+    //             credentials: "include",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({
+    //                 id_user: userData?.decoded?.id
+    //             })
+    //         })
+    //             .then(response => response.json())
+    //             .then(data => setDocuments(data));
+    //     }
+    // }, [isDataLoaded, userData]);
 
 
 
     const [name, setName] = useState("");
+    const [isPassword, setIsPassword] = useState(true);
+    const [password, setPassword] = useState("");
     const [files, setFiles] = useState([]);
-
-    useEffect(() => { console.log(name) }, [name]);
-    useEffect(() => { console.log(files) }, [files]);
 
     const addDocument = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        files.forEach(file => {
-            formData.append("files", file);
-        });
-        formData.append("name", name);
+        if (isPassword) {
+            await fetch("http://localhost:3000/api/addPassword", {
+                method: "POST",
+                body: JSON.stringify({
+                    name: name,
+                    password: password,
+                    id: userData.decoded.id
+                }),
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            // .finally(() => window.location.reload());
+        } else {
+            const formData = new FormData();
 
-        const response = await fetch("http://localhost:3000/api/addDocument", {
-            method: "POST",
-            body: formData,
-            credentials: "include"
-        });
+            formData.append("name", name);
+            formData.append("id", userData.decoded.id);
+            files.forEach(file => {
+                formData.append("files", file);
+            });
 
-        console.log(response);
+            await fetch("http://localhost:3000/api/addDocument", {
+                method: "POST",
+                body: formData,
+                credentials: "include"
+            })
+            // .finally(() => window.location.reload());
+        }
     }
 
     const isFormOpen = useRef(false);
@@ -120,20 +137,18 @@ export default function Profile() {
         }
     }
 
-    const [isPassword, setIsPassword] = useState(true);
-
     return (
-        <>
+        <UserContext.Provider value={userData}>
             <Background />
             <div className='wrapper'>
                 <main className='profile' ref={profile}>
                     <section className='profile--elements'>
                         {isDataLoaded && (
-                            <UserContext.Provider value={userData}>
+                            <>
                                 <ProfileUser userData={userData} userBlock={userBlock} />
                                 <ProfileFiles filesBlock={filesBlock} />
                                 <ProfileSettings settingsBlock={settingsBlock} />
-                            </UserContext.Provider>
+                            </>
                         )}
                     </section>
                     <AsideBar
@@ -152,28 +167,17 @@ export default function Profile() {
                         <AddFileIcon className="icon icon--add-file" onClick={() => handleForm(true)} />
                     </div>
 
-                    <form className="profile__form close" onSubmit={addDocument} ref={formAdd}>
-                        <div className='form__add-document'>
-                            <input type="text" placeholder="name" onChange={(e) => setName(e.target.value)} />
-                            <select id="" defaultValue="password" onChange={(e) => setIsPassword(e.target.value === "password")}>
-                                <option value="password" selected>Password</option>
-                                <option value="document">Document</option>
-                            </select>
-                            {isPassword ? (<>
-                                <input type="text" placeholder='password: *********' />
-                                <button type="submit">submit</button>
-                            </>) : (<>
-                                <input type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files))} />
-                                <button type="submit">submit</button>
-                            </>)}
-                        </div>
-                        {/* <div className='form__add-folder'>
-                            <input type="text" placeholder='name forler' />
-                            <button type="submit">submit</button>
-                        </div> */}
-                    </form>
+                    <FormAdd
+                        setName={setName}
+                        isPassword={isPassword}
+                        setIsPassword={setIsPassword}
+                        setFiles={setFiles}
+                        addDocument={addDocument}
+                        formAdd={formAdd}
+                        setPassword={setPassword}
+                    />
                 </main>
             </div>
-        </>
+        </UserContext.Provider>
     );
 }

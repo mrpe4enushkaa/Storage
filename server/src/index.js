@@ -1,5 +1,6 @@
 require("dotenv").config({ path: "./.env" });
 const express = require("express");
+const crypto = require("crypto");
 const app = express();
 const cors = require("cors");
 const mysql = require("mysql2");
@@ -17,10 +18,14 @@ app.use(cors({
 }));
 
 const PORT = 3000;
-const SECRET_KEY = process.env.SECRET_KEY
+const SECRET_KEY = process.env.SECRET_KEY;
 
 const database = require("./connections/database");
 const table = require("./connections/table");
+
+const algorithm = 'aes-256-cbc';
+const key = Buffer.from(process.env.ENCRYPTION_KEY, "hex");
+
 
 async function init() {
     await database();
@@ -180,9 +185,57 @@ app.post("/api/getDocuments", (req, res) => {
 
 
 app.post("/api/addDocument", upload.array("files"), (req, res) => {
-    const file = req.file;
+    const id = req.body.id;
     const name = req.body.name;
-    console.log(`line: 170; \n ${file} \n ${name}`);
+    const files = req.files;
+    const urls = files.map(file => file.filename);
+
+    const jsonUrls = JSON.stringify({ urls });
+
+    connection.query("INSERT INTO documents (id_user, name, urls) VALUES (?, ?, ?)", [id, name, jsonUrls], (error) => {
+        if (error) {
+            console.log(error);
+            return;
+        } 
+        console.log("Success");
+    });
+});
+
+const encrypt = (text) => {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(algorithm, key, iv);
+    const encrypted = Buffer.concat([cipher.update(text, 'utf-8'), cipher.final()]);
+    return {
+        iv: iv.toString('hex'),
+        content: encrypted.toString(("hex"))
+    }
+}
+
+const decrypt = (hash) => {
+    const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(hash.iv, "hex"));
+    const decrypted = Buffer.concat([
+        decipher.update(Buffer.from(hash.content, "hex")),
+        decipher.final()
+    ]);
+    return decrypted.toString("utf8");
+}
+
+app.post("/api/addPassword", upload.none(), (req, res) => {
+    const { name, id, password } = req.body;
+    const encrypted = encrypt(password);
+
+    const passwordJson = JSON.stringify({
+        content: encrypted.content,
+        iv: encrypted.iv
+    });
+
+    connection.query("INSERT INTO passwords (id_user, name, password) VALUES (?, ?, ?)", [id, name, passwordJson], (error, result) => {
+        if (error) {
+            console.error("Ошибка при вставке в базу данных:", error);
+            return;
+        }
+        console.log("Succsess!");
+    });
 });
 //profile end
 

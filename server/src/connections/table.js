@@ -29,7 +29,17 @@ async function table() {
         })
     });
 
-    const results = await Promise.all([createUsers, createDocuments]);
+    const createPasswords = new Promise((resolve, reject) => {
+        const sql = fs.readFileSync("./database/createPasswordsTable.sql", "utf8");
+        connection.query(sql, (error) => {
+            if (error) {
+                console.log("Error: ", error);
+                reject(error);
+            }
+        })
+    });
+
+    const results = await Promise.all([createUsers, createDocuments, createPasswords]);
 
     connection.end((error) => {
         if (error) {

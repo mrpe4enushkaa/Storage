@@ -1,4 +1,8 @@
 import React, { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
+
+gsap.registerPlugin(SplitText);
 
 export default function ProfileUser({ userData, userBlock }) {
     const progressBar = useRef(null);
@@ -19,6 +23,37 @@ export default function ProfileUser({ userData, userBlock }) {
     //     return () => observer.disconnect();
     // }, []);
 
+    let split, animation;
+
+    useEffect(() => {
+        split = SplitText.create(".words", { type: "chars" });
+        animation = gsap.from(split.chars, {
+            x: 150,
+            autoAlpha: 0,
+            duration: 0.7,
+            ease: "power4",
+            stagger: 0.025
+        })
+        // setup(); words() 
+    }, []);
+
+
+    // const words = () => {
+    //     animation && animation.revert();
+    //     animation = gsap.from(split.chars, {
+    //         x: 150,
+    //         opacity: 0,
+    //         duration: 0.7,
+    //         ease: "power4",
+    //         stagger: 0.025
+    //     })
+    // }
+
+    // function setup() {
+    //     split && split.revert();
+    //     animation && animation.revert();
+    // }
+
     return (
         <section className='profile--user' ref={userBlock}>
             <div className="profile--user__data-user">
@@ -37,7 +72,7 @@ export default function ProfileUser({ userData, userBlock }) {
             </div>
             <div className="profile--user__about">
                 <div className="profile--user__about--statistics">
-                    <span className="font-regular profile--user__about--name" style={{ marginBottom: "10px" }}>Stored</span>
+                    <span className="font-regular profile--user__about--name words" style={{ marginBottom: "10px" }}>Stored</span>
                     <div className="profile--user__about--bar">
                         <nav className="profile--user__about--repository">
                             <nav style={{ width: "60%" }} ref={progressBar} className="profile--user__about--repository-progress"></nav>
@@ -54,7 +89,7 @@ export default function ProfileUser({ userData, userBlock }) {
                     </div>
                 </div>
                 <div className="profile--user__about--activities">
-                    <span className="font-regular profile--user__about--name">Account activity</span>
+                    <span className="font-regular profile--user__about--name words">Account activity</span>
                     <div className="profile--user__about--blocks">
                         <span className="font-regular profile--user__about--not">No account activity</span>
                         {/* <div className="profile--user__about--block">
@@ -64,7 +99,7 @@ export default function ProfileUser({ userData, userBlock }) {
                     </div>
                 </div>
                 <div className="profile--user__about--history">
-                    <span className="font-regular profile--user__about--name">Entry history</span>
+                    <span className="font-regular profile--user__about--name words">Entry history</span>
                     {/* <span className="font-regular profile--user__about--not">No account entry history</span> */}
                     <div className="profile--user__about--blocks">
                         <div className="profile--user__about--block">
