@@ -312,9 +312,25 @@
 
 .profile--elements {
     grid-area: profile__elements;
+    overflow-y: auto;
 
     @extend %blocks-styles;
+
+    &::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #929292;
+        border-radius: 100px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #fff;
+        border-radius: 100px;
+    }
 }
+
 
 .profile--user {
     display: flex;
@@ -507,6 +523,8 @@
 
 .profile--files {
     width: calc(100% - 40px);
+    flex-grow: 1;
+    height: 100%;
     padding: 20px;
     display: flex;
     flex-wrap: wrap;
@@ -524,6 +542,17 @@
     display: flex;
     align-items: center;
     padding: 0 10px;
+    position: relative;
+
+    &:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        border-radius: 100px;
+        right: 2px;
+        cursor: pointer;
+    }
 }
 
 .profile--files__file--text {

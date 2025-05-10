@@ -228,6 +228,7 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
     const id = req.body.id;
     const name = req.body.name;
     const files = req.files;
+    console.log(files)
     const urls = files.map(file => file.filename);
 
     const jsonUrls = JSON.stringify({ urls });

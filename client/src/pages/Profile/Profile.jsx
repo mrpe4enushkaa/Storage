@@ -65,49 +65,16 @@ export default function Profile({ showToast }) {
 
     const [isPassword, setIsPassword] = useState(true);
 
+    useEffect(() => {
+        console.log(isPassword)
+    }, [isPassword])
+
     const setName = useRef("");
     const setPassword = useRef("");
     const setFiles = useRef([]);
     const buttonSubmit = useRef(null);
 
     const [isValidate, setIsValidate] = useState(false);
-
-    const addDocument = async (e) => {
-        e.preventDefault();
-
-        if (isValidate) {
-            if (isPassword) {
-                await fetch("http://localhost:3000/api/addPassword", {
-                    method: "POST",
-                    body: JSON.stringify({
-                        name: setName.current,
-                        password: setPassword.current,
-                        id: userData.decoded.id
-                    }),
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                })
-                // .finally(() => window.location.reload());
-            } else {
-                const formData = new FormData();
-
-                formData.append("name", setName.current);
-                formData.append("id", userData.decoded.id);
-                setFiles.current.forEach(file => {
-                    formData.append("files", file);
-                });
-
-                await fetch("http://localhost:3000/api/addDocument", {
-                    method: "POST",
-                    body: formData,
-                    credentials: "include"
-                })
-                // .finally(() => window.location.reload());
-            }
-        }
-    }
 
     const isFormOpen = useRef(false);
     let timeout = null;
@@ -139,6 +106,41 @@ export default function Profile({ showToast }) {
                 "profile__aside profile__toolbar profile__toolbar"
                 "profile__aside profile__elements profile__form"`;
             formAdd.current.style.display = 'block';
+        }
+    }
+
+    const addDocument = async (e) => {
+        e.preventDefault();
+
+        if (isValidate) {
+            if (isPassword) {
+                await fetch("http://localhost:3000/api/addPassword", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: setName.current,
+                        password: setPassword.current,
+                        id: userData.decoded.id
+                    }),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+            } else  {
+                console.log('dsfsd')
+                const formData = new FormData();
+                formData.append("name", setName.current);
+                formData.append("id", userData.decoded.id);
+                Array.from(setFiles.current).forEach(file => {
+                    formData.append("files", file);
+                });
+
+                await fetch("http://localhost:3000/api/addDocument", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include"
+                })
+            }
         }
     }
 

@@ -86,9 +86,9 @@ export default React.memo(function FormAdd({ setName, isPassword, setIsPassword,
                     <span className="form__name-dot font-regular">Type</span>
                     <select className="form__select" defaultValue="password" ref={selectType}
                         onChange={(e) => {
-                            setIsPassword(e.target.value === "password");
                             setStates(prev => ({ ...prev, name: e.target.value }));
                             changeSelect();
+                            setIsPassword(e.target.value === "password");
                         }}
                     >
                         <option value="password">Password</option>
@@ -112,6 +112,8 @@ export default React.memo(function FormAdd({ setName, isPassword, setIsPassword,
                             hidden
                             id="input-files"
                             onChange={(e) => {
+                                const files = Array.from(e.target.files);
+                                console.log(files)
                                 setFiles.current = Array.from(e.target.files);
                                 setCountFiles(e.target.files.length);
                                 setStates(prev => ({ ...prev, files: e.target.files }));
@@ -133,12 +135,15 @@ export default React.memo(function FormAdd({ setName, isPassword, setIsPassword,
                     className="form__button-submit"
                     type="submit" ref={buttonSubmit}
                     onClick={() => {
-                        const isValid = handleValidate();
-                        if (isValid) {
-                            formAdd.current.reset();
-                            changeSelect();
-                            changeBlocks();
-                            setIsPassword(true);
+                        const valid = handleValidate();
+
+                        if (valid) {
+                            setTimeout(() => {
+                                changeBlocks();
+                                setIsPassword(true);
+                                changeSelect();
+                                formAdd.current.reset();
+                            }, 50);
                         }
                     }}
                 >
