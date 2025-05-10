@@ -238,7 +238,8 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
             console.log(error);
             return;
         }
-        console.log("Success");
+
+        res.json({ result: true });
     });
 });
 
@@ -275,7 +276,8 @@ app.post("/api/addPassword", upload.none(), (req, res) => {
             console.error("Ошибка при вставке в базу данных:", error);
             return;
         }
-        console.log("Succsess!");
+        
+        res.json({ result: true });
     });
 });
 //profile end

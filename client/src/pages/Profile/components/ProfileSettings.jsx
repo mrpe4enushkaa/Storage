@@ -65,7 +65,7 @@ export default function ProfileSettings({ settingsBlock }) {
             </div>
             <div className="profile--settings__conteiner">
                 <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Panel placement</span>
+                    <span className="font-regular profile--settings__theme--name">Delete account</span>
                     <div className="profile--settings__theme--conteiner">
                         <div className="profile--settings__theme--circle selected">
                             <div className="panel-placement vertical"></div>

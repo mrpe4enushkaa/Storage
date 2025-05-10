@@ -59,7 +59,6 @@ export default function Profile({ showToast }) {
             })
                 .then(response => response.json())
                 .then(data => { setData(data); console.log(data) });
-
         }
     }, [isDataLoaded, userData]);
 
@@ -112,9 +111,11 @@ export default function Profile({ showToast }) {
     const addDocument = async (e) => {
         e.preventDefault();
 
+        let goToGet = false;
+
         if (isValidate) {
             if (isPassword) {
-                await fetch("http://localhost:3000/api/addPassword", {
+                const response = await fetch("http://localhost:3000/api/addPassword", {
                     method: "POST",
                     body: JSON.stringify({
                         name: setName.current,
@@ -125,8 +126,12 @@ export default function Profile({ showToast }) {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                })
-            } else  {
+                });
+
+                const result = await response.json();
+
+                goToGet = result.result;
+            } else {
                 console.log('dsfsd')
                 const formData = new FormData();
                 formData.append("name", setName.current);
@@ -135,11 +140,30 @@ export default function Profile({ showToast }) {
                     formData.append("files", file);
                 });
 
-                await fetch("http://localhost:3000/api/addDocument", {
+                const response = await fetch("http://localhost:3000/api/addDocument", {
                     method: "POST",
                     body: formData,
                     credentials: "include"
+                });
+
+                const result = await response.json();
+                
+                goToGet = result.result;
+            }
+
+            if (goToGet) {
+                fetch("http://localhost:3000/api/getData", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        id: userData?.decoded?.id
+                    })
                 })
+                    .then(response => response.json())
+                    .then(data => { setData(data); console.log(data) });
+
+                handleForm(true);
             }
         }
     }

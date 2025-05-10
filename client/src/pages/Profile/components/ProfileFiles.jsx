@@ -4,7 +4,7 @@ import FolderIcon from "../../../images/Folder.svg?react";
 import FileIcon from "../../../images/File.svg?react";
 import PasswordIcon from "../../../images/Password.svg?react";
 
-export default function ProfileFiles({ filesBlock, data }) {
+export default React.memo(function ProfileFiles({ filesBlock, data }) {
     return (
         <section className='profile--files hidden' ref={filesBlock}>
             {/* <div className="profile--files__file">
@@ -14,7 +14,7 @@ export default function ProfileFiles({ filesBlock, data }) {
             </div> */}
             {Array.isArray(data?.data) && data.data.length > 0 ? (
                 data.data.map((item, index) => (
-                    <div className="profile--files__file" key={index}>
+                    <div className="profile--files__file" key={index} id={`${item.type}/${item.type === "password" ? item.id_password : item.id_document}`}>
                         {item.type === "password" ? (
                             <PasswordIcon className="icon icon--password" />
                         ) : (
@@ -28,4 +28,4 @@ export default function ProfileFiles({ filesBlock, data }) {
             )}
         </section>
     );
-}
+});
