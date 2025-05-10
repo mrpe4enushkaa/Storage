@@ -154,7 +154,7 @@
     height: 100px;
     user-select: none;
 
-    &.done{
+    &.done {
         margin-bottom: 5px;
     }
 }
@@ -168,8 +168,8 @@
     height: 54px;
     align-self: flex-end;
     cursor: pointer;
-    
-    &.disabled{
+
+    &.disabled {
         background-color: transparent;
         border: 2px solid #fff;
         color: #fff;
@@ -514,8 +514,8 @@
 }
 
 .profile--files__file {
-    flex: 1 1 130px;
-    max-width: 245px;
+    flex: 1 1 200px;
+    max-width: 270px;
     height: 54px;
     background-color: #fff;
     border-radius: 100px;
@@ -531,6 +531,21 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.profile--files__file--no-data{
+    font-size: 42px;
+    margin-left: 7px;
+}
+
+.profile--files__file--date {
+    color: #000;
+    font-size: 18px;
+    margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: auto;
 }
 
 .icon--more {
@@ -559,6 +574,17 @@
     path {
         stroke: #000 !important;
         stroke-width: 2.7px;
+    }
+}
+
+.icon--password {
+    width: 40px;
+    height: 40px;
+    margin-left: 2px;
+
+    path {
+        stroke: #000 !important;
+        stroke-width: 1px;
     }
 }
 

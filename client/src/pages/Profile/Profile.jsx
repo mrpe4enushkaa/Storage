@@ -14,8 +14,8 @@ import FormAdd from './components/FormAdd';
 
 export default function Profile() {
     const [userData, setUserData] = useState({});
+    const [data, setData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
-    // const [documents, setDocuments] = useState({});
     const navigate = useNavigate();
 
     const profile = useRef(null);
@@ -47,20 +47,21 @@ export default function Profile() {
         }
     }, [isDataLoaded, userData]);
 
-    // useLayoutEffect(() => {
-    //     if (isDataLoaded && userData?.decoded?.id) {
-    //         fetch("http://localhost:3000/api/getDocuments", {
-    //             method: "POST",
-    //             credentials: "include",
-    //             headers: { "Content-Type": "application/json" },
-    //             body: JSON.stringify({
-    //                 id_user: userData?.decoded?.id
-    //             })
-    //         })
-    //             .then(response => response.json())
-    //             .then(data => setDocuments(data));
-    //     }
-    // }, [isDataLoaded, userData]);
+    useLayoutEffect(() => {
+        if (isDataLoaded && userData?.decoded?.id) {
+            fetch("http://localhost:3000/api/getData", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: userData?.decoded?.id
+                })
+            })
+                .then(response => response.json())
+                .then(data => { setData(data); console.log(data) });
+
+        }
+    }, [isDataLoaded, userData]);
 
 
 
@@ -146,7 +147,7 @@ export default function Profile() {
                         {isDataLoaded && (
                             <>
                                 <ProfileUser userData={userData} userBlock={userBlock} />
-                                <ProfileFiles filesBlock={filesBlock} />
+                                <ProfileFiles filesBlock={filesBlock} data={data} />
                                 <ProfileSettings settingsBlock={settingsBlock} />
                             </>
                         )}

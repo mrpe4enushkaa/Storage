@@ -22,6 +22,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const database = require("./connections/database");
 const table = require("./connections/table");
+const { json } = require("stream/consumers");
 
 const algorithm = 'aes-256-cbc';
 const key = Buffer.from(process.env.ENCRYPTION_KEY, "hex");
@@ -176,13 +177,52 @@ const getIp = () => {
     }
 }
 
-app.post("/api/getDocuments", (req, res) => {
-    const { id_user } = req.body;
+// const quickSort = (array) => {
+//     if (array.length < 2) {
+//         return array;
+//     }
 
-    res.json({ "message": "hello" });
-    console.log(getIp());
+//     const pivotItem = array[0];
+//     const pivot = pivotItem.uploaded;
+
+//     const less = array.slice(1).filter(item => item.uploaded <= pivot);
+//     const greater = array.slice(1).filter(item => item.uploaded > pivot);
+
+//     return [...quickSort(less), pivotItem, ...quickSort(greater)];
+// };
+
+app.post("/api/getData", async (req, res) => {
+    const { id } = req.body;
+
+    let documents = {};
+    let passwords = {};
+
+    let response = [];
+
+    connection.query("SELECT id_password, name, uploaded FROM passwords WHERE id_user = ?", [id], (error, result) => {
+        passwords = result;
+
+        connection.query("SELECT id_document, name, uploaded FROM documents WHERE id_user = ?", [id], (error, result) => {
+            documents = result;
+
+            documents.forEach(item => {
+                item.type = 'document';
+                response.push(item);
+            });
+
+            passwords.forEach(item => {
+                item.type = 'password';
+                response.push(item);
+            });
+
+            response.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
+
+            response.forEach(item => item.uploaded = new Date(item.uploaded).toLocaleDateString());
+
+            res.json({ data: response });
+        });
+    });
 });
-
 
 app.post("/api/addDocument", upload.array("files"), (req, res) => {
     const id = req.body.id;
@@ -196,7 +236,7 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
         if (error) {
             console.log(error);
             return;
-        } 
+        }
         console.log("Success");
     });
 });
