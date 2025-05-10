@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useEffect, useState, useRef, createContext } from 'react';
+import React, { useLayoutEffect, useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Background from '../../components/UI/Background/Background';
 import AsideBar from './components/AsideBar';
@@ -12,7 +12,7 @@ import ProfileSettings from './components/ProfileSettings';
 import { UserContext } from './context/UserContext';
 import FormAdd from './components/FormAdd';
 
-export default function Profile() {
+export default function Profile({ showToast }) {
     const [userData, setUserData] = useState({});
     const [data, setData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -63,45 +63,49 @@ export default function Profile() {
         }
     }, [isDataLoaded, userData]);
 
-
-
-    const [name, setName] = useState("");
     const [isPassword, setIsPassword] = useState(true);
-    const [password, setPassword] = useState("");
-    const [files, setFiles] = useState([]);
+
+    const setName = useRef("");
+    const setPassword = useRef("");
+    const setFiles = useRef([]);
+    const buttonSubmit = useRef(null);
+
+    const [isValidate, setIsValidate] = useState(false);
 
     const addDocument = async (e) => {
         e.preventDefault();
 
-        if (isPassword) {
-            await fetch("http://localhost:3000/api/addPassword", {
-                method: "POST",
-                body: JSON.stringify({
-                    name: name,
-                    password: password,
-                    id: userData.decoded.id
-                }),
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            })
-            // .finally(() => window.location.reload());
-        } else {
-            const formData = new FormData();
+        if (isValidate) {
+            if (isPassword) {
+                await fetch("http://localhost:3000/api/addPassword", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: setName.current,
+                        password: setPassword.current,
+                        id: userData.decoded.id
+                    }),
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+                // .finally(() => window.location.reload());
+            } else {
+                const formData = new FormData();
 
-            formData.append("name", name);
-            formData.append("id", userData.decoded.id);
-            files.forEach(file => {
-                formData.append("files", file);
-            });
+                formData.append("name", setName.current);
+                formData.append("id", userData.decoded.id);
+                setFiles.current.forEach(file => {
+                    formData.append("files", file);
+                });
 
-            await fetch("http://localhost:3000/api/addDocument", {
-                method: "POST",
-                body: formData,
-                credentials: "include"
-            })
-            // .finally(() => window.location.reload());
+                await fetch("http://localhost:3000/api/addDocument", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "include"
+                })
+                // .finally(() => window.location.reload());
+            }
         }
     }
 
@@ -138,6 +142,15 @@ export default function Profile() {
         }
     }
 
+    const open = () => {
+        buttonSubmit.current.classList.remove('disabled');
+        setIsValidate(true);
+    }
+    const close = () => {
+        buttonSubmit.current.classList.add('disabled');
+        setIsValidate(false);
+    }
+
     return (
         <UserContext.Provider value={userData}>
             <Background />
@@ -164,8 +177,14 @@ export default function Profile() {
                     <div className='profile__toolbar' ref={toolbar}>
                         <input type="text" placeholder='my_file...' className='profile__toolbar--input-search' />
                         <LoopIcon className="icon icon--search" />
-                        <AddFolderIcon className="icon icon--add-folder" />
-                        <AddFileIcon className="icon icon--add-file" onClick={() => handleForm(true)} />
+                        <AddFileIcon className="icon icon--add-file"
+                            onClick={() => {
+                                handleForm(true);
+                                formAdd.current.reset();
+                                setIsPassword(true);
+                                close();
+                            }}
+                        />
                     </div>
 
                     <FormAdd
@@ -176,6 +195,12 @@ export default function Profile() {
                         addDocument={addDocument}
                         formAdd={formAdd}
                         setPassword={setPassword}
+                        showToast={showToast}
+                        buttonSubmit={buttonSubmit}
+                        open={open}
+                        close={close}
+                        isValidate={isValidate}
+                        setIsValidate={setIsValidate}
                     />
                 </main>
             </div>
