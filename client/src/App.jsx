@@ -4,6 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import Indentification from './pages/Identification/Identification';
 import Profile from './pages/Profile/Profile';
 import Error from './pages/Error/Error';
+import Item from './pages/Item/Item';
 import "react-toastify/dist/ReactToastify.css";
 import './App.scss';
 
@@ -14,6 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Indentification showToast={showToast} />} />
           <Route path="/profile" element={<Profile showToast={showToast} />} />
+          <Route path='/:type/:id' element={<Item showToast={showToast}/>} />
           <Route path='*' element={<Error />} />
         </Routes>
       </BrowserRouter>

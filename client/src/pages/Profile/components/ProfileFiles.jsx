@@ -3,8 +3,11 @@ import React from "react";
 import FolderIcon from "../../../images/Folder.svg?react";
 import FileIcon from "../../../images/File.svg?react";
 import PasswordIcon from "../../../images/Password.svg?react";
+import { useNavigate } from "react-router-dom";
 
 export default React.memo(function ProfileFiles({ filesBlock, data }) {
+    const navigate = useNavigate();
+
     return (
         <section className='profile--files hidden' ref={filesBlock}>
             {/* <div className="profile--files__file">
@@ -14,7 +17,10 @@ export default React.memo(function ProfileFiles({ filesBlock, data }) {
             </div> */}
             {Array.isArray(data?.data) && data.data.length > 0 ? (
                 data.data.map((item, index) => (
-                    <div className="profile--files__file" key={index} id={`${item.type}/${item.type === "password" ? item.id_password : item.id_document}`}>
+                    <div className="profile--files__file"
+                        key={index}
+                        onClick={() => navigate(`/${item.type}/${item.type === "password" ? item.id_password : item.id_document}`)}
+                    >
                         {item.type === "password" ? (
                             <PasswordIcon className="icon icon--password" />
                         ) : (

@@ -5,7 +5,6 @@ import AsideBar from './components/AsideBar';
 import ProfileUser from './components/ProfileUser';
 import ProfileFiles from './components/ProfileFiles';
 import LoopIcon from "../../images/Loop.svg?react";
-import AddFolderIcon from "../../images/AddFolder.svg?react";
 import AddFileIcon from "../../images/AddFile.svg?react";
 import "./Profile.scss";
 import ProfileSettings from './components/ProfileSettings';
@@ -26,6 +25,18 @@ export default function Profile({ showToast }) {
     const formAdd = useRef(null);
 
     const toolbar = useRef(null);
+
+    const [isPassword, setIsPassword] = useState(true);
+
+    const setName = useRef("");
+    const setPassword = useRef("");
+    const setFiles = useRef([]);
+    const buttonSubmit = useRef(null);
+
+    const [isValidate, setIsValidate] = useState(false);
+
+    const isFormOpen = useRef(false);
+    let timeout = null;
 
     document.title = "Profile";
 
@@ -61,22 +72,6 @@ export default function Profile({ showToast }) {
                 .then(data => { setData(data); console.log(data) });
         }
     }, [isDataLoaded, userData]);
-
-    const [isPassword, setIsPassword] = useState(true);
-
-    useEffect(() => {
-        console.log(isPassword)
-    }, [isPassword])
-
-    const setName = useRef("");
-    const setPassword = useRef("");
-    const setFiles = useRef([]);
-    const buttonSubmit = useRef(null);
-
-    const [isValidate, setIsValidate] = useState(false);
-
-    const isFormOpen = useRef(false);
-    let timeout = null;
 
     const handleForm = (isProfile) => {
         if (isProfile) {
@@ -147,7 +142,7 @@ export default function Profile({ showToast }) {
                 });
 
                 const result = await response.json();
-                
+
                 goToGet = result.result;
             }
 
