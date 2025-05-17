@@ -6,10 +6,10 @@ import ProfileUser from './components/ProfileUser';
 import ProfileFiles from './components/ProfileFiles';
 import LoopIcon from "../../images/Loop.svg?react";
 import AddFileIcon from "../../images/AddFile.svg?react";
-import "./Profile.scss";
 import ProfileSettings from './components/ProfileSettings';
 import { UserContext } from './context/UserContext';
 import FormAdd from './components/FormAdd';
+import "./Profile.scss";
 
 export default function Profile({ showToast }) {
     const [userData, setUserData] = useState({});
@@ -127,7 +127,6 @@ export default function Profile({ showToast }) {
 
                 goToGet = result.result;
             } else {
-                console.log('dsfsd')
                 const formData = new FormData();
                 formData.append("name", setName.current);
                 formData.append("id", userData.decoded.id);
@@ -156,21 +155,40 @@ export default function Profile({ showToast }) {
                     })
                 })
                     .then(response => response.json())
-                    .then(data => { setData(data); console.log(data) });
+                    .then(data => setData(data));
 
                 handleForm(true);
             }
         }
     }
 
+    useEffect(() => {
+        if (data && data.data) {
+            setSearchData(data);
+        }
+    }, [data]);
+
     const open = () => {
         buttonSubmit.current.classList.remove('disabled');
         setIsValidate(true);
     }
+
     const close = () => {
         buttonSubmit.current.classList.add('disabled');
         setIsValidate(false);
     }
+
+    const [searchState, setSearchState] = useState("");
+    const [searchData, setSearchData] = useState({});
+
+    const handleSearch = () => {
+        if (searchState === "") {
+            setSearchData(data);
+            return;
+        }
+
+        setSearchData(data?.data?.filter((item) => searchState === item.name));
+    };
 
     return (
         <UserContext.Provider value={userData}>
@@ -181,7 +199,7 @@ export default function Profile({ showToast }) {
                         {isDataLoaded && (
                             <>
                                 <ProfileUser userData={userData} userBlock={userBlock} />
-                                <ProfileFiles filesBlock={filesBlock} data={data} />
+                                <ProfileFiles filesBlock={filesBlock} data={searchData} />
                                 <ProfileSettings settingsBlock={settingsBlock} />
                             </>
                         )}
@@ -196,8 +214,8 @@ export default function Profile({ showToast }) {
                         handleForm={handleForm}
                     />
                     <div className='profile__toolbar' ref={toolbar}>
-                        <input type="text" placeholder='my_file...' className='profile__toolbar--input-search' />
-                        <LoopIcon className="icon icon--search" />
+                        <input type="text" onInput={(e) => setSearchState(e.target.value)} placeholder='My_file...' className='profile__toolbar--input-search' />
+                        <LoopIcon className="icon icon--search" onClick={handleSearch} />
                         <AddFileIcon className="icon icon--add-file"
                             onClick={() => {
                                 handleForm(true);
