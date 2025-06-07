@@ -22,7 +22,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 const database = require("./connections/database");
 const table = require("./connections/table");
-const { json } = require("stream/consumers");
+const path = require("path");
 
 const algorithm = 'aes-256-cbc';
 const key = Buffer.from(process.env.ENCRYPTION_KEY, "hex");
@@ -276,11 +276,98 @@ app.post("/api/addPassword", upload.none(), (req, res) => {
             console.error("Ошибка при вставке в базу данных:", error);
             return;
         }
-        
+
         res.json({ result: true });
     });
 });
 //profile end
+
+//item start
+
+app.post("/api/:type/:id", (req, res) => {
+    const { type, id } = req.params;
+    const { id_user } = req.body;
+
+    const getPassword = async () => {
+        connection.query("SELECT * FROM PASSWORDS WHERE id_password = ? AND id_user = ?", [id, id_user], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            if (result.length === 0) {
+                res.json({ "error": true });
+                return;
+            }
+
+            const name = result[0].NAME;
+            const hash = result[0].PASSWORD;
+
+            const password = decrypt(hash);
+
+            res.json({ "type": "password", "name": name, "password": password, "error": false });
+        })
+    }
+
+    const getDocuments = async () => {
+        connection.query(
+            "SELECT * FROM DOCUMENTS WHERE id_document = ? AND id_user = ?",
+            [id, id_user],
+            (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json({ error: true });
+                }
+
+                if (result.length === 0) {
+                    return res.json({ error: true });
+                }
+
+                const name = result[0].NAME;
+                const urls = result[0].URLS.urls;
+
+                // 👉 Генерируем ссылки, по которым фронт сможет скачать файлы
+                const baseUrl = "http://localhost:3000/files"; // маршрут ниже
+                const fileLinks = urls.map(name => `${baseUrl}/${encodeURIComponent(name)}`);
+
+                res.json({ name, error: false, files: fileLinks });
+            }
+        );
+    };
+
+    switch (type) {
+        case "password":
+            getPassword();
+            break;
+        case "document":
+            getDocuments();
+            break;
+        default:
+            // res.json({ "error": true });
+            return;
+    }
+});
+
+const fs = require("fs");
+
+app.get("/files/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const uploadsDir = path.join(__dirname, "uploads");
+    const requestedPath = path.join(uploadsDir, filename);
+
+    if (!requestedPath.startsWith(uploadsDir)) {
+        return res.status(400).send("Некорректный путь");
+    } 
+
+    if (!fs.existsSync(requestedPath)) {
+        return res.status(404).send("Файл не найден");
+    }
+
+    res.sendFile(requestedPath);
+});
+
+//item end
+
 
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);

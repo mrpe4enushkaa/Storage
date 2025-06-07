@@ -1,5 +1,5 @@
-import React, { useState, useLayoutEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useLayoutEffect, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Item.scss";
 import Background from "../../components/UI/Background/Background";
 import FileIcon from "../../images/File.svg?react";
@@ -10,6 +10,8 @@ export default function Item() {
     const [userData, setUserData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const [data, setData] = useState({});
 
     useLayoutEffect(() => {
         fetch("http://localhost:3000/api/rights", {
@@ -29,6 +31,27 @@ export default function Item() {
         }
     }, [isDataLoaded, userData]);
 
+    useLayoutEffect(() => {
+        if (userData?.decoded?.id) {
+            fetch(`http://localhost:3000/api${window.location.pathname}`, {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id_user: userData?.decoded?.id
+                })
+            })
+                .then(response => response.json())
+                .then(data => { setData(data); console.log(data); });
+        }
+    }, [userData]);
+
+    useEffect(() => {
+        if (data && data?.error === true) {
+            navigate("/error");
+        }
+    }, [data]);
+
     return (
         <>
             <Background />
@@ -36,12 +59,14 @@ export default function Item() {
                 <div className="wrapper__inner">
                     <BackIcon className="icon--item back" onClick={() => navigate("/profile")} />
                     <div className="wrapper__block">
-                        <span>Page item</span>
+                        {/* Or or (img) */}
                         <FileIcon className="icon--item" />
                         <PasswordIcon className="icon--item password" />
+                        <span className="font-regular item--name">Name item</span>
                     </div>
                     <div className="wrapper__block">
-                        <span>;ldsfjk;lfsdj;l</span>
+                        {/* Or or (text) */}
+                        <span className="font-regular">Description</span>
                     </div>
                 </div>
             </div>

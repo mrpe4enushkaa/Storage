@@ -11,6 +11,7 @@ export default React.memo(function FormAdd({ setName, isPassword, setIsPassword,
     const blockFiles = useRef(null);
     const inputPassword = useRef(null);
     const inputFiles = useRef(null);
+    
     const handleValidate = () => {
         let valid = false;
 
