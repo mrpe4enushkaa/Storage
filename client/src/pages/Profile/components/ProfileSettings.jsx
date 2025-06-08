@@ -3,11 +3,32 @@ import AddIcon from "../../../images/Add.svg?react";
 import PencilIcon from "../../../images/Pencil.svg?react";
 import DeleteIcon from "../../../images/Delete.svg?react";
 import { UserContext } from '../context/UserContext';
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileSettings({ settingsBlock }) {
     const userContext = useContext(UserContext);
+    const navigate = useNavigate();
 
     const handleAnimations = () => document.body.classList.toggle("no-transition");
+
+    const handleDeleteAccount = async () => {
+        const user_id = userContext.decoded.id;
+
+        await fetch("http://localhost:3000/api/deleteAccount", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify({
+                id: user_id
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.delete === true) {
+                    navigate("/");
+                }
+            })
+    }
 
     return (
         <section className='profile--settings hidden' ref={settingsBlock}>
@@ -64,7 +85,7 @@ export default function ProfileSettings({ settingsBlock }) {
                 </div>
             </div>
             <div className="profile--settings__conteiner">
-                <div className="profile--settings__theme">
+                {/* <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Languages</span>
                     <nav className="profile--settings__theme--conteiner">
                         <div className="profile--settings__theme--circle">
@@ -77,7 +98,7 @@ export default function ProfileSettings({ settingsBlock }) {
                             <span className="font-regular">De</span>
                         </div>
                     </nav>
-                </div>
+                </div> */}
                 <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Animations</span>
                     <nav className="profile--settings__theme--conteiner">
@@ -87,7 +108,7 @@ export default function ProfileSettings({ settingsBlock }) {
                 <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Delete account</span>
                     <div className="profile--settings__theme--conteiner">
-                        <button>Delete</button>
+                        <button className="profile--settings--delete-button font-regular" onClick={handleDeleteAccount}>Delete</button>
                     </div>
                 </div>
             </div>

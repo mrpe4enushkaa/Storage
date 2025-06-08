@@ -9,12 +9,13 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const os = require("os");
 const multer = require("multer");
+const fs = require("fs");
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
     origin: "http://localhost:5173",
-    credentials: true
+    credentials: true,
 }));
 
 const PORT = 3000;
@@ -280,6 +281,20 @@ app.post("/api/addPassword", upload.none(), (req, res) => {
         res.json({ result: true });
     });
 });
+
+app.post("/api/deleteAccount", (req, res) => {
+    const user_id = req.body.id;
+
+    connection.query("DELETE FROM users WHERE ID_USER = ?", [user_id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        res.clearCookie("jwt");
+        res.json({ "delete": true });
+    });
+});
+
 //profile end
 
 //item start
@@ -305,7 +320,7 @@ app.post("/api/:type/:id", (req, res) => {
 
             const password = decrypt(hash);
 
-            res.json({ "type": "password", "name": name, "password": password, "error": false });
+            res.json({ "type": "password", name, "password": password, "error": false });
         })
     }
 
@@ -330,7 +345,7 @@ app.post("/api/:type/:id", (req, res) => {
                 const baseUrl = "http://localhost:3000/files";
                 const fileLinks = urls.map(name => `${baseUrl}/${name}`);
 
-                res.json({ name, error: false, files: fileLinks, id_document });
+                res.json({ "type": "document", name, error: false, files: fileLinks, id_document });
             }
         );
     };
@@ -348,44 +363,36 @@ app.post("/api/:type/:id", (req, res) => {
     }
 });
 
-const fs = require("fs");
-
 app.get("/files/:filename", rightsMiddleware, (req, res) => {
     const id_user = req.data.decoded.id;
-
     const filename = req.params.filename;
     const uploadsDir = path.join(__dirname, "uploads");
     const requestedPath = path.join(uploadsDir, filename);
 
-    let coincidence = false;
+    if (!requestedPath.startsWith(uploadsDir)) {
+        return res.status(400).send("Некорректный путь");
+    }
 
     connection.query("SELECT urls FROM DOCUMENTS WHERE id_user = ?", [id_user], (err, result) => {
         if (err) {
             console.log(err);
-            return;
+            return res.status(500).send("Ошибка сервера");
         }
 
-        result.forEach(url => {
-            url.urls.urls.forEach(item => {
-                if (item === filename) {
-                    coincidence = true;
-                }
-            });
-        });
+        const coincidence = result.some(url =>
+            url.urls.urls.includes(filename)
+        );
 
-        if (coincidence) {
-            if (!requestedPath.startsWith(uploadsDir)) {
-                return res.status(400).send("Некорректный путь");
-            }
-
-            if (!fs.existsSync(requestedPath)) {
-                return res.status(404).send("Файл не найден");
-            }
-
-            res.sendFile(requestedPath);
-        } else {
-            res.json({ "rights": false });
+        if (!coincidence) {
+            return res.status(403).json({ rights: false });
         }
+
+        if (!fs.existsSync(requestedPath)) {
+            return res.status(404).send("Файл не найден");
+        }
+
+        // res.setHeader("Content-Type", "application/pdf");
+        res.download(requestedPath);
     });
 });
 

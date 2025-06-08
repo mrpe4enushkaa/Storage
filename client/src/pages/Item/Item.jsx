@@ -1,5 +1,5 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Item.scss";
 import Background from "../../components/UI/Background/Background";
 import FileIcon from "../../images/File.svg?react";
@@ -10,7 +10,6 @@ export default function Item() {
     const [userData, setUserData] = useState({});
     const [isDataLoaded, setIsDataLoaded] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
     const [data, setData] = useState({});
 
     useLayoutEffect(() => {
@@ -22,7 +21,7 @@ export default function Item() {
             .then(data => {
                 setUserData(data.data);
                 setIsDataLoaded(true);
-            })
+            });
     }, []);
 
     useLayoutEffect(() => {
@@ -52,6 +51,10 @@ export default function Item() {
         }
     }, [data]);
 
+    const handleDownload = (src) => {
+        window.location.href = src;
+    }
+
     return (
         <>
             <Background />
@@ -59,14 +62,21 @@ export default function Item() {
                 <div className="wrapper__inner">
                     <BackIcon className="icon--item back" onClick={() => navigate("/profile")} />
                     <div className="wrapper__block">
-                        {/* Or or (img) */}
-                        <FileIcon className="icon--item" />
-                        <PasswordIcon className="icon--item password" />
+                        {data.type === 'password'
+                            ? <PasswordIcon className="icon--item password" />
+                            : <FileIcon className="icon--item file" />}
                         <span className="font-regular item--name">{data.name}</span>
                     </div>
-                    <div className="wrapper__block">
-                        {/* Or or (text) */}
-                        <span className="font-regular">Description</span>
+                    <div className="wrapper__block items">
+                        {data && data?.type === "document" ?
+                            <span className="item--description font-regular">Document(s)</span> :
+                            <span className="item--description font-regular">Password</span>}
+                        <div className="item--div-item">
+                            {data?.files?.map((src, index) => {
+                                return <button className="item--button font-regular" key={index} onClick={() => handleDownload(src)}>Document {index + 1}</button>
+                            })}
+                            {data?.password && <span className="item--password font-regular">{data?.password}</span>}
+                        </div>
                     </div>
                 </div>
             </div>
