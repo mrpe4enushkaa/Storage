@@ -46,7 +46,7 @@ export default function Item() {
         }
     }, [userData]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (data && data?.error === true) {
             navigate("/error");
         }
@@ -62,7 +62,7 @@ export default function Item() {
                         {/* Or or (img) */}
                         <FileIcon className="icon--item" />
                         <PasswordIcon className="icon--item password" />
-                        <span className="font-regular item--name">Name item</span>
+                        <span className="font-regular item--name">{data.name}</span>
                     </div>
                     <div className="wrapper__block">
                         {/* Or or (text) */}

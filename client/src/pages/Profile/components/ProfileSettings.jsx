@@ -65,17 +65,6 @@ export default function ProfileSettings({ settingsBlock }) {
             </div>
             <div className="profile--settings__conteiner">
                 <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Delete account</span>
-                    <div className="profile--settings__theme--conteiner">
-                        <div className="profile--settings__theme--circle selected">
-                            <div className="panel-placement vertical"></div>
-                        </div>
-                        <div className="profile--settings__theme--circle">
-                        <div className="panel-placement horizontal"></div>
-                        </div>
-                    </div>
-                </div>
-                <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Languages</span>
                     <nav className="profile--settings__theme--conteiner">
                         <div className="profile--settings__theme--circle">
@@ -94,6 +83,12 @@ export default function ProfileSettings({ settingsBlock }) {
                     <nav className="profile--settings__theme--conteiner">
                         <input type="checkbox" className="profile--settings__theme--checkbox" />
                     </nav>
+                </div>
+                <div className="profile--settings__theme">
+                    <span className="font-regular profile--settings__theme--name">Delete account</span>
+                    <div className="profile--settings__theme--conteiner">
+                        <button>Delete</button>
+                    </div>
                 </div>
             </div>
         </section>

@@ -228,7 +228,7 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
     const id = req.body.id;
     const name = req.body.name;
     const files = req.files;
-    console.log(files)
+
     const urls = files.map(file => file.filename);
 
     const jsonUrls = JSON.stringify({ urls });
@@ -325,12 +325,12 @@ app.post("/api/:type/:id", (req, res) => {
 
                 const name = result[0].NAME;
                 const urls = result[0].URLS.urls;
+                const id_document = result[0].ID_DOCUMENT;
 
-                // 👉 Генерируем ссылки, по которым фронт сможет скачать файлы
-                const baseUrl = "http://localhost:3000/files"; // маршрут ниже
-                const fileLinks = urls.map(name => `${baseUrl}/${encodeURIComponent(name)}`);
+                const baseUrl = "http://localhost:3000/files";
+                const fileLinks = urls.map(name => `${baseUrl}/${name}`);
 
-                res.json({ name, error: false, files: fileLinks });
+                res.json({ name, error: false, files: fileLinks, id_document });
             }
         );
     };
@@ -343,27 +343,50 @@ app.post("/api/:type/:id", (req, res) => {
             getDocuments();
             break;
         default:
-            // res.json({ "error": true });
+            res.json({ "error": true });
             return;
     }
 });
 
 const fs = require("fs");
 
-app.get("/files/:filename", (req, res) => {
+app.get("/files/:filename", rightsMiddleware, (req, res) => {
+    const id_user = req.data.decoded.id;
+
     const filename = req.params.filename;
     const uploadsDir = path.join(__dirname, "uploads");
     const requestedPath = path.join(uploadsDir, filename);
 
-    if (!requestedPath.startsWith(uploadsDir)) {
-        return res.status(400).send("Некорректный путь");
-    } 
+    let coincidence = false;
 
-    if (!fs.existsSync(requestedPath)) {
-        return res.status(404).send("Файл не найден");
-    }
+    connection.query("SELECT urls FROM DOCUMENTS WHERE id_user = ?", [id_user], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
 
-    res.sendFile(requestedPath);
+        result.forEach(url => {
+            url.urls.urls.forEach(item => {
+                if (item === filename) {
+                    coincidence = true;
+                }
+            });
+        });
+
+        if (coincidence) {
+            if (!requestedPath.startsWith(uploadsDir)) {
+                return res.status(400).send("Некорректный путь");
+            }
+
+            if (!fs.existsSync(requestedPath)) {
+                return res.status(404).send("Файл не найден");
+            }
+
+            res.sendFile(requestedPath);
+        } else {
+            res.json({ "rights": false });
+        }
+    });
 });
 
 //item end
