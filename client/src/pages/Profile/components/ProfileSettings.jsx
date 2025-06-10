@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import AddIcon from "../../../images/Add.svg?react";
 import PencilIcon from "../../../images/Pencil.svg?react";
 import DeleteIcon from "../../../images/Delete.svg?react";
@@ -8,8 +8,21 @@ import { useNavigate } from "react-router-dom";
 export default function ProfileSettings({ settingsBlock }) {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
+    const checkboxRef = useRef(null);
 
-    const handleAnimations = () => document.body.classList.toggle("no-transition");
+    const handleAnimations = () => {
+        let key = localStorage.getItem("animations");
+
+        if (key === "false") {
+            document.body.classList.remove("no-transition");
+            localStorage.setItem("animations", "true");
+            checkboxRef.current.checked = true;
+        } else {
+            document.body.classList.add("no-transition");
+            localStorage.setItem("animations", "false");
+            checkboxRef.current.checked = false;
+        }
+    };
 
     const handleDeleteAccount = async () => {
         const user_id = userContext.decoded.id;
@@ -29,6 +42,14 @@ export default function ProfileSettings({ settingsBlock }) {
                 }
             })
     }
+
+    useEffect(() => {
+        if (!localStorage.getItem("animations")) {
+            localStorage.setItem("animations", true);
+        }
+
+        handleAnimations();
+    }, []);
 
     return (
         <section className='profile--settings hidden' ref={settingsBlock}>
@@ -69,7 +90,7 @@ export default function ProfileSettings({ settingsBlock }) {
                         </div>
                     </div>
                 </div>
-                <div className="profile--settings__theme">
+                {/* <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Theme</span>
                     <nav className="profile--settings__theme--conteiner">
                         <div className="profile--settings__theme--circle">
@@ -82,7 +103,7 @@ export default function ProfileSettings({ settingsBlock }) {
                             <span className="font-regular">S</span>
                         </div>
                     </nav>
-                </div>
+                </div> */}
             </div>
             <div className="profile--settings__conteiner">
                 {/* <div className="profile--settings__theme">
@@ -102,7 +123,7 @@ export default function ProfileSettings({ settingsBlock }) {
                 <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Animations</span>
                     <nav className="profile--settings__theme--conteiner">
-                        <input type="checkbox" className="profile--settings__theme--checkbox" />
+                        <input type="checkbox" className="profile--settings__theme--checkbox" onChange={handleAnimations} ref={checkboxRef}/>
                     </nav>
                 </div>
                 <div className="profile--settings__theme">

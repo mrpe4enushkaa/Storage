@@ -1,4 +1,3 @@
-import React from "react";
 import Threads from "../../react-bits/Threads/Threads";
 import './Background.scss'
 
