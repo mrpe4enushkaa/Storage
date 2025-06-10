@@ -217,10 +217,13 @@ app.post("/api/getData", async (req, res) => {
             });
 
             response.sort((a, b) => new Date(b.uploaded) - new Date(a.uploaded));
-
             response.forEach(item => item.uploaded = new Date(item.uploaded).toLocaleDateString());
 
-            res.json({ data: response });
+            res.json({
+                "data": response,
+                "passwords_length": passwords.length,
+                "documents_length": documents.length,
+            });
         });
     });
 });

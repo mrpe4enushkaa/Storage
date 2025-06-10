@@ -69,7 +69,7 @@ export default function Profile({ showToast }) {
                 })
             })
                 .then(response => response.json())
-                .then(data => { setData(data); console.log(data) });
+                .then(data => setData(data));
         }
     }, [isDataLoaded, userData]);
 
@@ -198,7 +198,7 @@ export default function Profile({ showToast }) {
                     <section className='profile--elements'>
                         {isDataLoaded && (
                             <>
-                                <ProfileUser userData={userData} userBlock={userBlock} />
+                                <ProfileUser userData={userData} userBlock={userBlock} data={data} />
                                 <ProfileFiles filesBlock={filesBlock} data={searchData} />
                                 <ProfileSettings settingsBlock={settingsBlock} />
                             </>
