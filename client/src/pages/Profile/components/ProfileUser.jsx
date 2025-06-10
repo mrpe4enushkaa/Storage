@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 
@@ -11,6 +11,8 @@ export default function ProfileUser({ userData, userBlock, data }) {
     const passwordsTextRef = useRef(null);
 
     const textBar = useRef(null);
+
+    const [entries, setEntries] = useState([]);
 
     const setPosition = () => {
         const pos = progressBar.current.getBoundingClientRect();
@@ -69,22 +71,23 @@ export default function ProfileUser({ userData, userBlock, data }) {
         }
     }, [data]);
 
+    useEffect(() => {
+        const id = userData?.decoded?.id;
 
-    // const words = () => {
-    //     animation && animation.revert();
-    //     animation = gsap.from(split.chars, {
-    //         x: 150,
-    //         opacity: 0,
-    //         duration: 0.7,
-    //         ease: "power4",
-    //         stagger: 0.025
-    //     })
-    // }
-
-    // function setup() {
-    //     split && split.revert();
-    //     animation && animation.revert();
-    // }
+        fetch("http://localhost:3000/api/getEntries", {
+            method: "POST",
+            body: JSON.stringify({
+                id: id
+            }),
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        })
+            .then(response => response.json())
+            .then(data => {
+                setEntries(data.entries); console.log(data.entries
+                )
+            });
+    }, [userData]);
 
     return (
         <section className='profile--user' ref={userBlock}>
@@ -139,10 +142,12 @@ export default function ProfileUser({ userData, userBlock, data }) {
                     <span className="font-regular profile--user__about--name words">Entry history</span>
                     {/* <span className="font-regular profile--user__about--not">No account entry history</span> */}
                     <div className="profile--user__about--blocks">
-                        <div className="profile--user__about--block">
-                            <span className="font-regular">213.1.2.49:2001</span>
-                            <span className="font-regular">19.05.2024</span>
-                        </div>
+                        {entries.map((item, index) => (
+                            <div className="profile--user__about--block" key={index}>
+                                <span className="font-regular">{item.IP_ADDRESSES}</span>
+                                <span className="font-regular">{new Date(item.UPLOADED).toLocaleString()}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

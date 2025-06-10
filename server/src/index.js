@@ -73,6 +73,17 @@ app.get("/api/rights", rightsMiddleware, (req, res) => {
     res.json({ "data": req.data });
 });
 
+const getIp = () => {
+    const interfaces = os.networkInterfaces();
+
+    for (const listInterfaces of Object.values(interfaces)) {
+        for (const interface of listInterfaces) {
+            if (interface.family === "IPv4" && !interface.internal) {
+                return interface.address;
+            }
+        }
+    }
+}
 
 //identification start
 async function checkUser(username, password) {
@@ -95,6 +106,17 @@ async function checkUser(username, password) {
     });
 }
 
+const addEntry = async (id) => {
+    const ip = getIp();
+
+    connection.query("INSERT INTO entries (ID_USER, IP_ADDRESSES) VALUES (?, ?)", [id, ip], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+    });
+}
+
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
     const { match, id, email } = await checkUser(username, password);
@@ -109,6 +131,8 @@ app.post("/api/checkUser", async (req, res) => {
             maxAge: 3600000 * 24
         });
 
+        await addEntry(id);
+
         res.status(200).json({ "user": true });
     } else {
         res.status(401).json({ "user": false });
@@ -118,6 +142,7 @@ app.post("/api/checkUser", async (req, res) => {
 
 async function addUser(email, username, password) {
     const hashPassword = await bcrypt.hash(password, 15);
+
     return new Promise((resolve, reject) => {
         connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
             if (error) {
@@ -129,6 +154,8 @@ async function addUser(email, username, password) {
                     if (error) {
                         return reject({ add: false, id: null });
                     }
+
+                    addEntry(result[0].id_user);
 
                     return resolve({ add: true, id: result[0].id_user });
                 });
@@ -165,18 +192,6 @@ app.get("/api/logout", (req, res) => {
     res.json({ "exit": true })
 });
 
-
-const getIp = () => {
-    const interfaces = os.networkInterfaces();
-
-    for (const listInterfaces of Object.values(interfaces)) {
-        for (const interface of listInterfaces) {
-            if (interface.family === "IPv4" && !interface.internal) {
-                return interface.address;
-            }
-        }
-    }
-}
 
 // const quickSort = (array) => {
 //     if (array.length < 2) {
@@ -295,6 +310,19 @@ app.post("/api/deleteAccount", (req, res) => {
         }
         res.clearCookie("jwt");
         res.json({ "delete": true });
+    });
+});
+
+app.post("/api/getEntries", (req, res) => {
+    const { id } = req.body;
+
+    connection.query("SELECT IP_ADDRESSES, UPLOADED FROM entries WHERE ID_USER = ?", [id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.json({ "entries": result });
     });
 });
 
