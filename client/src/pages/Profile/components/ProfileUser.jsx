@@ -13,6 +13,7 @@ export default function ProfileUser({ userData, userBlock, data }) {
     const textBar = useRef(null);
 
     const [entries, setEntries] = useState([]);
+    const [activities, setActivities] = useState([]);
 
     const setPosition = () => {
         const pos = progressBar.current.getBoundingClientRect();
@@ -83,10 +84,18 @@ export default function ProfileUser({ userData, userBlock, data }) {
             credentials: "include",
         })
             .then(response => response.json())
-            .then(data => {
-                setEntries(data.entries); console.log(data.entries
-                )
-            });
+            .then(data => setEntries(data.entries));
+
+        fetch("http://localhost:3000/api/getActivities", {
+            method: "POST",
+            body: JSON.stringify({
+                id: id
+            }),
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        })
+            .then(response => response.json())
+            .then(data => setActivities(data.activities));
     }, [userData]);
 
     return (
@@ -131,11 +140,14 @@ export default function ProfileUser({ userData, userBlock, data }) {
                 <div className="profile--user__about--activities">
                     <span className="font-regular profile--user__about--name words">Account activity</span>
                     <div className="profile--user__about--blocks">
-                        <span className="font-regular profile--user__about--not">No account activity</span>
-                        {/* <div className="profile--user__about--block">
-                            <span className="font-regular">Added new password "Password_1"</span>
-                            <span className="font-regular">10.02.2025</span>
-                        </div> */}
+                        {activities.length === 0 ?
+                            (<span className="font-regular profile--user__about--not">No account activity</span>) :
+                            activities.map((item, index) => (
+                                <div className="profile--user__about--block" key={index}>
+                                    <span className="font-regular">{item.TEXT}</span>
+                                    <span className="font-regular">{new Date(item.UPLOADED).toLocaleString()}</span>
+                                </div>
+                            ))}
                     </div>
                 </div>
                 <div className="profile--user__about--history">

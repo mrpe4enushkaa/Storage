@@ -258,7 +258,18 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
             return;
         }
 
-        res.json({ result: true });
+        const text = `The document "${name}" has been added`;
+
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
+
+            if (result) {
+                res.json({ result: true });
+            }
+        });
     });
 });
 
@@ -296,7 +307,18 @@ app.post("/api/addPassword", upload.none(), (req, res) => {
             return;
         }
 
-        res.json({ result: true });
+        const text = `The password "${name}" has been added`;
+
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
+
+            if (result) {
+                res.json({ result: true });
+            }
+        });
     });
 });
 
@@ -323,6 +345,19 @@ app.post("/api/getEntries", (req, res) => {
         }
 
         res.json({ "entries": result });
+    });
+});
+
+app.post("/api/getActivities", (req, res) => {
+    const { id } = req.body;
+
+    connection.query("SELECT TEXT, UPLOADED FROM activities WHERE ID_USER = ?", [id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.json({ "activities": result });
     });
 });
 
