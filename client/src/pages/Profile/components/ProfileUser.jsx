@@ -96,7 +96,7 @@ export default function ProfileUser({ userData, userBlock, data }) {
         })
             .then(response => response.json())
             .then(data => setActivities(data.activities));
-    }, [userData]);
+    }, [userData, data]);
 
     return (
         <section className='profile--user' ref={userBlock}>
@@ -142,7 +142,7 @@ export default function ProfileUser({ userData, userBlock, data }) {
                     <div className="profile--user__about--blocks">
                         {activities.length === 0 ?
                             (<span className="font-regular profile--user__about--not">No account activity</span>) :
-                            activities.map((item, index) => (
+                            [...activities].reverse().map((item, index) => (
                                 <div className="profile--user__about--block" key={index}>
                                     <span className="font-regular">{item.TEXT}</span>
                                     <span className="font-regular">{new Date(item.UPLOADED).toLocaleString()}</span>
@@ -152,9 +152,8 @@ export default function ProfileUser({ userData, userBlock, data }) {
                 </div>
                 <div className="profile--user__about--history">
                     <span className="font-regular profile--user__about--name words">Entry history</span>
-                    {/* <span className="font-regular profile--user__about--not">No account entry history</span> */}
                     <div className="profile--user__about--blocks">
-                        {entries.map((item, index) => (
+                        {[...entries].reverse().map((item, index) => (
                             <div className="profile--user__about--block" key={index}>
                                 <span className="font-regular">{item.IP_ADDRESSES}</span>
                                 <span className="font-regular">{new Date(item.UPLOADED).toLocaleString()}</span>
