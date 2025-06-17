@@ -363,12 +363,10 @@
 
 .profile--user__username {
     font-size: 64px;
-    margin-left: 100px;
 }
 
 .profile--user__email {
     font-size: 40px;
-    margin-left: 100px;
 }
 
 .profile--user__button--edit-password {
@@ -641,7 +639,10 @@
     width: 200px;
     height: 200px;
     border-radius: 100px;
-    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .profile--settings__user-data {
@@ -804,4 +805,11 @@
     position: relative;
     font-size: 18px;
     cursor: pointer;
+}
+
+.profile--settings__user-data__data-flex{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    position: relative;
 }

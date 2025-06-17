@@ -258,7 +258,7 @@ app.post("/api/addDocument", upload.array("files"), (req, res) => {
             return;
         }
 
-        const text = `The document "${name}" has been added`;
+        const text = `The document «${name}» has been added`;
 
         connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id, text], (err, result) => {
             if (err) {
@@ -307,7 +307,7 @@ app.post("/api/addPassword", upload.none(), (req, res) => {
             return;
         }
 
-        const text = `The password "${name}" has been added`;
+        const text = `The password «${name}» has been added`;
 
         connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id, text], (err, result) => {
             if (err) {
@@ -383,10 +383,11 @@ app.post("/api/:type/:id", (req, res) => {
 
             const name = result[0].NAME;
             const hash = result[0].PASSWORD;
+            const id_password = result[0].ID_PASSWORD;
 
             const password = decrypt(hash);
 
-            res.json({ "type": "password", name, "password": password, "error": false });
+            res.json({ "type": "password", name, "password": password, "error": false, id_password });
         })
     }
 
@@ -460,6 +461,44 @@ app.get("/files/:filename", rightsMiddleware, (req, res) => {
         // res.setHeader("Content-Type", "application/pdf");
         res.download(requestedPath);
     });
+});
+
+app.delete("/api/deleteFile", (req, res) => {
+    const { user_id, id_file, type } = req.body;
+
+    const deleteDocument = () => {
+        connection.query("DELETE FROM documents WHERE ID_DOCUMENT = ? AND ID_USER = ?", [id_file, user_id], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            res.json({ "result": true });
+        });
+    }
+
+    const deletePassword = () => {
+        connection.query("DELETE FROM passwords WHERE ID_PASSWORD = ? AND ID_USER = ?", [id_file, user_id], (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            res.json({ "result": true });
+        });
+    }
+
+    switch (type) {
+        case "document":
+            deleteDocument();
+            break;
+        case "password":
+            deletePassword();
+            break;
+        default:
+            res.json({ "error": true });
+            return;
+    }
 });
 
 //item end

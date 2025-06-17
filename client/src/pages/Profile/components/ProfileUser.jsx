@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
+import Edit from "../../../components/UI/Edit/Edit";
+import User from "../../../components/UI/User/User";
 
 gsap.registerPlugin(SplitText);
 
@@ -85,6 +87,10 @@ export default function ProfileUser({ userData, userBlock, data }) {
         })
             .then(response => response.json())
             .then(data => setEntries(data.entries));
+    }, [userData]);
+
+    useEffect(() => {
+        const id = userData?.decoded?.id;
 
         fetch("http://localhost:3000/api/getActivities", {
             method: "POST",
@@ -96,12 +102,12 @@ export default function ProfileUser({ userData, userBlock, data }) {
         })
             .then(response => response.json())
             .then(data => setActivities(data.activities));
-    }, [userData, data]);
+    }, [userData, data])
 
     return (
         <section className='profile--user' ref={userBlock}>
             <div className="profile--user__data-user">
-                <div className="profile--user__avatar"></div>
+                <User />
                 <div className="profile--user__data">
                     <span className='font-regular profile--user__username'>
                         {userData?.decoded?.username}

@@ -41,7 +41,7 @@ export default function Item() {
                 })
             })
                 .then(response => response.json())
-                .then(data => { setData(data); console.log(data); });
+                .then(data => setData(data));
         }
     }, [userData]);
 
@@ -51,8 +51,23 @@ export default function Item() {
         }
     }, [data]);
 
-    const handleDownload = (src) => {
-        window.location.href = src;
+    const handleDownload = src => window.location.href = src;
+
+    const handleDeleteFile = () => {
+        if (userData?.decoded) {
+            const user_id = userData?.decoded?.id;
+            const id_file = data?.id_document || data?.id_password;
+            const type = data?.type;
+
+            fetch("http://localhost:3000/api/deleteFile", {
+                credentials: "include",
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id, id_file, type
+                })
+            }).then(() => navigate("/profile"));
+        }
     }
 
     return (
@@ -77,6 +92,7 @@ export default function Item() {
                             })}
                             {data?.password && <span className="item--password font-regular">{data?.password}</span>}
                         </div>
+                        <button className="item--delete" onClick={handleDeleteFile}>Delete file</button>
                     </div>
                 </div>
             </div>

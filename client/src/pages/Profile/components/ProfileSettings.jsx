@@ -1,14 +1,18 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import AddIcon from "../../../images/Add.svg?react";
 import PencilIcon from "../../../images/Pencil.svg?react";
 import DeleteIcon from "../../../images/Delete.svg?react";
 import { UserContext } from '../context/UserContext';
 import { useNavigate } from "react-router-dom";
+import Edit from "../../../components/UI/Edit/Edit";
+import User from "../../../components/UI/User/User";
 
 export default function ProfileSettings({ settingsBlock }) {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
     const checkboxRef = useRef(null);
+
+    const [hoveredField, setHoveredField] = useState(null);
 
     const handleAnimations = () => {
         let key = localStorage.getItem("animations");
@@ -55,11 +59,42 @@ export default function ProfileSettings({ settingsBlock }) {
         <section className='profile--settings hidden' ref={settingsBlock}>
             <div className="profile--settings__conteiner">
                 <div className="profile--settings__user-data">
-                    <div className="profile--settings__avatar"></div>
+                    <div
+                        className="profile--settings__avatar"
+                        onMouseEnter={() => setHoveredField("avatar")}
+                        onMouseLeave={() => setHoveredField(null)}
+                        style={{ position: "relative", display: "inline-block", width: "fit-content" }}
+                    >
+                        <User settings={true} />
+                        <Edit visible={hoveredField === "avatar"} avatar={true} />
+                    </div>
                     <nav className="profile--settings__user-data__data">
-                        <span className="font-regular">Username</span>
-                        <span className="font-regular">Password</span>
-                        <span className="font-regular">Email</span>
+                        <div
+                            className="profile--settings__user-data__data-flex"
+                            onMouseEnter={() => setHoveredField("username")}
+                            onMouseLeave={() => setHoveredField(null)}
+                        >
+                            <span className="font-regular">Username: {userContext?.decoded?.username}</span>
+                            <Edit visible={hoveredField === "username"} />
+                        </div>
+
+                        <div
+                            className="profile--settings__user-data__data-flex"
+                            onMouseEnter={() => setHoveredField("email")}
+                            onMouseLeave={() => setHoveredField(null)}
+                        >
+                            <span className="font-regular">Email: {userContext?.decoded?.email}</span>
+                            <Edit visible={hoveredField === "email"} />
+                        </div>
+
+                        <div
+                            className="profile--settings__user-data__data-flex"
+                            onMouseEnter={() => setHoveredField("password")}
+                            onMouseLeave={() => setHoveredField(null)}
+                        >
+                            <span className="font-regular">Password: *******</span>
+                            <Edit visible={hoveredField === "password"} />
+                        </div>
                     </nav>
                 </div>
                 <div className="profile--settings__blocked">
@@ -123,7 +158,7 @@ export default function ProfileSettings({ settingsBlock }) {
                 <div className="profile--settings__theme">
                     <span className="font-regular profile--settings__theme--name">Animations</span>
                     <nav className="profile--settings__theme--conteiner">
-                        <input type="checkbox" className="profile--settings__theme--checkbox" onChange={handleAnimations} ref={checkboxRef}/>
+                        <input type="checkbox" className="profile--settings__theme--checkbox" onChange={handleAnimations} ref={checkboxRef} />
                     </nav>
                 </div>
                 <div className="profile--settings__theme">

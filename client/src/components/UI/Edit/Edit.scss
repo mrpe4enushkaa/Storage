@@ -1,0 +1,39 @@
+.icon--edit-wrapper {
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.3s;
+
+    &.visible {
+        opacity: 1;
+    }
+
+    &.avatar {
+        width: 80%;
+        height: 80%;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 9999px;
+        background-color: white;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .icon--edit-svg {
+            width: 60%; 
+            height: 60%;
+            stroke: #000;
+        }
+    }
+}
+
+.icon--edit-wrapper:not(.avatar) {
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+}
