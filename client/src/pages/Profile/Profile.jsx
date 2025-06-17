@@ -190,9 +190,11 @@ export default function Profile({ showToast }) {
         setSearchData(data?.data?.filter((item) => searchState === item.name));
     };
 
+    const [animationsKey, setAnimationsKey] = useState(localStorage.getItem("animations"));
+
     return (
         <UserContext.Provider value={userData}>
-            <Background />
+            <Background animationsKey={animationsKey} />
             <div className='wrapper'>
                 <main className='profile' ref={profile}>
                     <section className='profile--elements'>
@@ -200,7 +202,7 @@ export default function Profile({ showToast }) {
                             <>
                                 <ProfileUser userData={userData} userBlock={userBlock} data={data} />
                                 <ProfileFiles filesBlock={filesBlock} data={searchData} />
-                                <ProfileSettings settingsBlock={settingsBlock} />
+                                <ProfileSettings settingsBlock={settingsBlock} setAnimationsKey={setAnimationsKey}/>
                             </>
                         )}
                     </section>

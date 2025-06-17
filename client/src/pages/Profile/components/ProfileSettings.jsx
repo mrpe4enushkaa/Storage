@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Edit from "../../../components/UI/Edit/Edit";
 import User from "../../../components/UI/User/User";
 
-export default function ProfileSettings({ settingsBlock }) {
+export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
     const checkboxRef = useRef(null);
@@ -21,10 +21,12 @@ export default function ProfileSettings({ settingsBlock }) {
             document.body.classList.remove("no-transition");
             localStorage.setItem("animations", "true");
             checkboxRef.current.checked = true;
+            setAnimationsKey("true");
         } else {
             document.body.classList.add("no-transition");
             localStorage.setItem("animations", "false");
             checkboxRef.current.checked = false;
+            setAnimationsKey("false");
         }
     };
 
@@ -49,7 +51,8 @@ export default function ProfileSettings({ settingsBlock }) {
 
     useEffect(() => {
         if (!localStorage.getItem("animations")) {
-            localStorage.setItem("animations", true);
+            localStorage.setItem("animations", "true");
+            setAnimationsKey("true")
         }
 
         handleAnimations();
