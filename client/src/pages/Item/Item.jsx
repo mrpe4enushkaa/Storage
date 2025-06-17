@@ -58,13 +58,14 @@ export default function Item() {
             const user_id = userData?.decoded?.id;
             const id_file = data?.id_document || data?.id_password;
             const type = data?.type;
+            const name = data?.name;
 
             fetch("http://localhost:3000/api/deleteFile", {
                 credentials: "include",
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    user_id, id_file, type
+                    user_id, id_file, type, name
                 })
             }).then(() => navigate("/profile"));
         }

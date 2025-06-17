@@ -114,7 +114,6 @@ export default React.memo(function FormAdd({ setName, isPassword, setIsPassword,
                             id="input-files"
                             onChange={(e) => {
                                 const files = Array.from(e.target.files);
-                                console.log(files)
                                 setFiles.current = Array.from(e.target.files);
                                 setCountFiles(e.target.files.length);
                                 setStates(prev => ({ ...prev, files: e.target.files }));

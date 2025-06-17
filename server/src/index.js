@@ -464,7 +464,9 @@ app.get("/files/:filename", rightsMiddleware, (req, res) => {
 });
 
 app.delete("/api/deleteFile", (req, res) => {
-    const { user_id, id_file, type } = req.body;
+    const { user_id, id_file, type, name } = req.body;
+
+    const text = `The ${type} «${name}» has been deleted`;
 
     const deleteDocument = () => {
         connection.query("DELETE FROM documents WHERE ID_DOCUMENT = ? AND ID_USER = ?", [id_file, user_id], (err, result) => {
@@ -473,7 +475,14 @@ app.delete("/api/deleteFile", (req, res) => {
                 return;
             }
 
-            res.json({ "result": true });
+            connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [user_id, text], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                res.json({ "result": true });
+            })
         });
     }
 
@@ -484,7 +493,14 @@ app.delete("/api/deleteFile", (req, res) => {
                 return;
             }
 
-            res.json({ "result": true });
+            connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [user_id, text], (err, result) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+
+                res.json({ "result": true });
+            })
         });
     }
 
