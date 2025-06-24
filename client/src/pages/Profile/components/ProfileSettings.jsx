@@ -58,119 +58,86 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
         handleAnimations();
     }, []);
 
+    const dialogAdd = useRef(null);
+
     return (
-        <section className='profile--settings hidden' ref={settingsBlock}>
-            <div className="profile--settings__conteiner">
-                <div className="profile--settings__user-data">
-                    <div
-                        className="profile--settings__avatar"
-                        onMouseEnter={() => setHoveredField("avatar")}
-                        onMouseLeave={() => setHoveredField(null)}
-                        style={{ position: "relative", display: "inline-block", width: "fit-content" }}
-                    >
-                        <User settings={true} />
-                        <Edit visible={hoveredField === "avatar"} avatar={true} />
-                    </div>
-                    <nav className="profile--settings__user-data__data">
+        <>
+            <dialog ref={dialogAdd} className="dialogAddIp">
+                <div className="dialogAddIp--conteiner">
+                    <span>Hello!</span>
+                    <button onClick={() => dialogAdd.current.close()}>Close</button>
+                </div>
+            </dialog>
+            <section className='profile--settings hidden' ref={settingsBlock}>
+                <div className="profile--settings__conteiner">
+                    <div className="profile--settings__user-data">
                         <div
-                            className="profile--settings__user-data__data-flex"
-                            onMouseEnter={() => setHoveredField("username")}
+                            className="profile--settings__avatar"
+                            onMouseEnter={() => setHoveredField("avatar")}
                             onMouseLeave={() => setHoveredField(null)}
+                            style={{ position: "relative", display: "inline-block", width: "fit-content" }}
                         >
-                            <span className="font-regular">Username: {userContext?.decoded?.username}</span>
-                            <Edit visible={hoveredField === "username"} />
+                            <User settings={true} />
+                            <Edit visible={hoveredField === "avatar"} avatar={true} />
                         </div>
+                        <nav className="profile--settings__user-data__data">
+                            <div
+                                className="profile--settings__user-data__data-flex"
+                                onMouseEnter={() => setHoveredField("username")}
+                                onMouseLeave={() => setHoveredField(null)}
+                            >
+                                <span className="font-regular">Username: {userContext?.decoded?.username}</span>
+                                <Edit visible={hoveredField === "username"} />
+                            </div>
 
-                        <div
-                            className="profile--settings__user-data__data-flex"
-                            onMouseEnter={() => setHoveredField("email")}
-                            onMouseLeave={() => setHoveredField(null)}
-                        >
-                            <span className="font-regular">Email: {userContext?.decoded?.email}</span>
-                            <Edit visible={hoveredField === "email"} />
-                        </div>
+                            <div
+                                className="profile--settings__user-data__data-flex"
+                                onMouseEnter={() => setHoveredField("email")}
+                                onMouseLeave={() => setHoveredField(null)}
+                            >
+                                <span className="font-regular">Email: {userContext?.decoded?.email}</span>
+                                <Edit visible={hoveredField === "email"} />
+                            </div>
 
-                        <div
-                            className="profile--settings__user-data__data-flex"
-                            onMouseEnter={() => setHoveredField("password")}
-                            onMouseLeave={() => setHoveredField(null)}
-                        >
-                            <span className="font-regular">Password: *******</span>
-                            <Edit visible={hoveredField === "password"} />
-                        </div>
-                    </nav>
-                </div>
-                <div className="profile--settings__blocked">
-                    <nav className="profile--settings__blocked--name">
-                        <span className="font-regular">Blocked ip addresses</span>
-                        <AddIcon className="icon icon--add" />
-                    </nav>
-                    <div className="profile--user__about--blocks profile--settings__blocked--blocks">
-                        <div className="profile--user__about--block">
-                            <span>321</span>
-                            <span>dwsqdf</span>
-                            <DeleteIcon className="icon icon--delete" />
-                        </div>
-                        <div className="profile--user__about--block">
-                            <span>321</span>
-                            <span>dwsqdf</span>
-                            <DeleteIcon className="icon icon--delete" />
-                        </div>
-                        <div className="profile--user__about--block">
-                            <span>321</span>
-                            <span>dwsqdf</span>
-                            <DeleteIcon className="icon icon--delete" />
-                        </div>
-                        <div className="profile--user__about--block">
-                            <span>321</span>
-                            <span>dwsqdf</span>
-                            <DeleteIcon className="icon icon--delete" />
+                            <div
+                                className="profile--settings__user-data__data-flex"
+                                onMouseEnter={() => setHoveredField("password")}
+                                onMouseLeave={() => setHoveredField(null)}
+                            >
+                                <span className="font-regular">Password: *******</span>
+                                <Edit visible={hoveredField === "password"} />
+                            </div>
+                        </nav>
+                    </div>
+                    <div className="profile--settings__blocked">
+                        <nav className="profile--settings__blocked--name">
+                            <span className="font-regular">Blocked ip addresses</span>
+                            <AddIcon className="icon icon--add" onClick={() => dialogAdd.current.showModal()} />
+                        </nav>
+                        <div className="profile--user__about--blocks profile--settings__blocked--blocks font-regular">
+                            <div className="profile--user__about--block">
+                                <span>ip</span>
+                                <span>date</span>
+                                <DeleteIcon className="icon icon--delete" />
+                            </div>
                         </div>
                     </div>
                 </div>
-                {/* <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Theme</span>
-                    <nav className="profile--settings__theme--conteiner">
-                        <div className="profile--settings__theme--circle">
-                            <span className="font-regular">L</span>
+                <div className="profile--settings__conteiner">
+                    <div className="profile--settings__theme">
+                        <span className="font-regular profile--settings__theme--name">Animations</span>
+                        <nav className="profile--settings__theme--conteiner">
+                            <input type="checkbox" className="profile--settings__theme--checkbox" onChange={handleAnimations} ref={checkboxRef} />
+                        </nav>
+                    </div>
+                    <div className="profile--settings__theme">
+                        <span className="font-regular profile--settings__theme--name">Delete account</span>
+                        <div className="profile--settings__theme--conteiner">
+                            <button className="profile--settings--delete-button font-regular" onClick={handleDeleteAccount}>Delete</button>
                         </div>
-                        <div className="profile--settings__theme--circle selected">
-                            <span className="font-regular">D</span>
-                        </div>
-                        <div className="profile--settings__theme--circle">
-                            <span className="font-regular">S</span>
-                        </div>
-                    </nav>
-                </div> */}
-            </div>
-            <div className="profile--settings__conteiner">
-                {/* <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Languages</span>
-                    <nav className="profile--settings__theme--conteiner">
-                        <div className="profile--settings__theme--circle">
-                            <span className="font-regular">Ru</span>
-                        </div>
-                        <div className="profile--settings__theme--circle selected">
-                            <span className="font-regular">En</span>
-                        </div>
-                        <div className="profile--settings__theme--circle">
-                            <span className="font-regular">De</span>
-                        </div>
-                    </nav>
-                </div> */}
-                <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Animations</span>
-                    <nav className="profile--settings__theme--conteiner">
-                        <input type="checkbox" className="profile--settings__theme--checkbox" onChange={handleAnimations} ref={checkboxRef} />
-                    </nav>
-                </div>
-                <div className="profile--settings__theme">
-                    <span className="font-regular profile--settings__theme--name">Delete account</span>
-                    <div className="profile--settings__theme--conteiner">
-                        <button className="profile--settings--delete-button font-regular" onClick={handleDeleteAccount}>Delete</button>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </>
     );
 }

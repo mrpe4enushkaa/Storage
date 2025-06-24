@@ -67,7 +67,9 @@ export default function Item() {
                 body: JSON.stringify({
                     user_id, id_file, type, name
                 })
-            }).then(() => navigate("/profile"));
+            })
+                .then(response => response.json())
+                .then(data => { if (data.result === true) navigate("/profile"); });
         }
     }
 
