@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { SplitText } from "gsap/SplitText";
 import Edit from "../../../components/UI/Edit/Edit";
 import User from "../../../components/UI/User/User";
-
-gsap.registerPlugin(SplitText);
 
 export default function ProfileUser({ userData, userBlock, data }) {
     const progressBar = useRef(null);
@@ -31,20 +27,6 @@ export default function ProfileUser({ userData, userBlock, data }) {
     //     observer.observe(progressBar.current);
     //     return () => observer.disconnect();
     // }, []);
-
-    let split, animation;
-
-    useEffect(() => {
-        split = SplitText.create(".words", { type: "chars" });
-        animation = gsap.from(split.chars, {
-            x: 150,
-            autoAlpha: 0,
-            duration: 0.7,
-            ease: "power4",
-            stagger: 0.025
-        })
-        // setup(); words() 
-    }, []);
 
     useEffect(() => {
         if (

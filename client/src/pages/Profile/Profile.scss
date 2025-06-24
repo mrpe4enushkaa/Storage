@@ -824,6 +824,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    user-select: none;
 }
 
 .dialogAddIp--conteiner {
@@ -832,4 +833,54 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+}
+
+.dialogAddIp--block {
+    background-color: #fff;
+    padding: 50px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    border-radius: 2rem;
+    user-select: none;
+    gap: 10px;
+}
+
+.dialogAddIp--text {
+    font-size: 32px;
+}
+
+.icon-close {
+    width: 20px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 8px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.dialogAddIp--input {
+    width: calc(100% - 40px);
+    height: 54px;
+    padding: 0 20px;
+    background-color: #fff;
+    border-radius: 100px;
+    border: 1px solid black;
+    font-size: 18px;
+    color: #000;
+    margin-bottom: 20px;
+}
+
+.dialogAddIp--button {
+    height: 54px;
+    padding: 0 30px;
+    background-color: #fff;
+    border-radius: 100px;
+    border: 1px solid black;
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
 }

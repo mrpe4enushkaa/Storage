@@ -59,13 +59,32 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
     }, []);
 
     const dialogAdd = useRef(null);
+    const inputIP = useRef(null);
+
+    const handleAddNewIP = () => {
+        fetch("http://localhost:3000/api/addBlock", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                ip: inputIP.current.value
+            })
+        })
+    }
 
     return (
         <>
-            <dialog ref={dialogAdd} className="dialogAddIp">
+            <dialog ref={dialogAdd} className="dialogAddIp font-regular">
                 <div className="dialogAddIp--conteiner">
-                    <span>Hello!</span>
-                    <button onClick={() => dialogAdd.current.close()}>Close</button>
+                    <div className="dialogAddIp--block">
+                        <svg onClick={() => dialogAdd.current.close()} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 42L42 1M1 1L42 42" stroke="black" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                        <span className="dialogAddIp--text">Block an IP address</span>
+                        <label htmlFor="add-ip" style={{ fontSize: "24px", marginTop: "5px" }}>An IP address</label>
+                        <input type="text" id="add-ip" className="dialogAddIp--input" ref={inputIP}/>
+                        <button className="dialogAddIp--button" onClick={handleAddNewIP}>Add</button>
+                    </div>
                 </div>
             </dialog>
             <section className='profile--settings hidden' ref={settingsBlock}>

@@ -361,6 +361,10 @@ app.post("/api/getActivities", (req, res) => {
     });
 });
 
+app.post("/api/addBlock", (req, res) => {
+    console.log(req.body.ip);
+});
+
 //profile end
 
 //item start
