@@ -123,7 +123,7 @@ async function checkUser(username, password) {
 async function checkUser(username, password, ip) {
     return new Promise((resolve, reject) => {
         connection.query(
-            "SELECT id_user, password FROM users WHERE username = ?",
+            "SELECT id_user, password, email FROM users WHERE username = ?",
             [username],
             async (error, result) => {
                 if (error) {
