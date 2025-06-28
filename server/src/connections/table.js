@@ -58,8 +58,17 @@ async function table() {
             }
         })
     });
+    const createIPs = new Promise((resolve, reject) => {
+        const sql = fs.readFileSync("./database/createIPsTable.sql", "utf8");
+        connection.query(sql, (error) => {
+            if (error) {
+                console.log("Error: ", error);
+                reject(error);
+            }
+        })
+    });
 
-    const results = await Promise.all([createUsers, createDocuments, createPasswords, createEntries, createActivities]);
+    const results = await Promise.all([createUsers, createDocuments, createPasswords, createEntries, createActivities, createIPs]);
 
     connection.end((error) => {
         if (error) {

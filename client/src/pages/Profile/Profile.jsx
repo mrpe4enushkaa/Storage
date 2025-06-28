@@ -49,17 +49,20 @@ export default function Profile({ showToast }) {
             .then(data => {
                 setUserData(data.data);
                 setIsDataLoaded(true);
+                if (data?.data?.rights === false) {
+                    navigate("/error");
+                }
             })
     }, []);
 
     useLayoutEffect(() => {
-        if (isDataLoaded && (!userData?.rights || !userData?.decoded?.id)) {
+        if (isDataLoaded && userData?.rights === false) {
             navigate("/error");
         }
     }, [isDataLoaded, userData]);
 
-    useLayoutEffect(() => {
-        if (isDataLoaded && userData?.decoded?.id) {
+    useEffect(() => {
+        if (isDataLoaded && userData?.rights === true && userData?.decoded?.id) {
             fetch("http://localhost:3000/api/getData", {
                 method: "POST",
                 credentials: "include",
@@ -202,7 +205,7 @@ export default function Profile({ showToast }) {
                             <>
                                 <ProfileUser userData={userData} userBlock={userBlock} data={data} />
                                 <ProfileFiles filesBlock={filesBlock} data={searchData} />
-                                <ProfileSettings settingsBlock={settingsBlock} setAnimationsKey={setAnimationsKey}/>
+                                <ProfileSettings settingsBlock={settingsBlock} setAnimationsKey={setAnimationsKey} />
                             </>
                         )}
                     </section>

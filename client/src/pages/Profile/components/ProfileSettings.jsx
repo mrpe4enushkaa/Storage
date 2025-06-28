@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import AddIcon from "../../../images/Add.svg?react";
 import PencilIcon from "../../../images/Pencil.svg?react";
 import DeleteIcon from "../../../images/Delete.svg?react";
 import { UserContext } from '../context/UserContext';
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import Edit from "../../../components/UI/Edit/Edit";
 import User from "../../../components/UI/User/User";
 
@@ -49,6 +49,10 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
             })
     }
 
+    useLayoutEffect(() => {
+        getBlocks();
+    }, []);
+
     useEffect(() => {
         if (!localStorage.getItem("animations")) {
             localStorage.setItem("animations", "true");
@@ -58,18 +62,59 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
         handleAnimations();
     }, []);
 
+    const [blocks, setBlocks] = useState([]);
+
+    const getBlocks = () => {
+        const user_id = userContext.decoded.id;
+
+        fetch("http://localhost:3000/api/getBlocks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                id: user_id
+            })
+        })
+            .then(response => response.json())
+            .then(data => setBlocks(data.reverse()));
+    }
+
     const dialogAdd = useRef(null);
     const inputIP = useRef(null);
 
     const handleAddNewIP = () => {
+        const user_id = userContext.decoded.id;
+
         fetch("http://localhost:3000/api/addBlock", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({
-                ip: inputIP.current.value
+                ip: inputIP.current.value,
+                id: user_id
             })
         })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "success") {
+                    getBlocks();
+                    dialogAdd.current.close();
+                    inputIP.current.value = "";
+                }
+            });
+    }
+
+    const deleteBlock = (id_user, id_ip) => {
+        fetch("http://localhost:3000/api/deleteBlock", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                id_user, id_ip
+            })
+        })
+            .then(response => response.json())
+            .then(data => { if (data.message === "success") getBlocks() });
     }
 
     return (
@@ -82,7 +127,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                         </svg>
                         <span className="dialogAddIp--text">Block an IP address</span>
                         <label htmlFor="add-ip" style={{ fontSize: "24px", marginTop: "5px" }}>An IP address</label>
-                        <input type="text" id="add-ip" className="dialogAddIp--input" ref={inputIP}/>
+                        <input type="text" id="add-ip" className="dialogAddIp--input" ref={inputIP} />
                         <button className="dialogAddIp--button" onClick={handleAddNewIP}>Add</button>
                     </div>
                 </div>
@@ -134,11 +179,13 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                             <AddIcon className="icon icon--add" onClick={() => dialogAdd.current.showModal()} />
                         </nav>
                         <div className="profile--user__about--blocks profile--settings__blocked--blocks font-regular">
-                            <div className="profile--user__about--block">
-                                <span>ip</span>
-                                <span>date</span>
-                                <DeleteIcon className="icon icon--delete" />
-                            </div>
+                            {blocks.length > 0 ? blocks.map(item => (
+                                <div className="profile--user__about--block" key={item.ID_IP}>
+                                    <span>{item.IP}</span>
+                                    <span>{new Date(item.UPLOADED).toLocaleString()}</span>
+                                    <DeleteIcon className="icon icon--delete" onClick={() => deleteBlock(item.ID_USER, item.ID_IP)} />
+                                </div>
+                            )) : <span className="font-regular">No account blocks</span>}
                         </div>
                     </div>
                 </div>

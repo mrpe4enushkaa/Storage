@@ -60,13 +60,27 @@ const rightsMiddleware = (req, res, next) => {
     const token = req.cookies.jwt;
 
     if (!token) {
-        return res.json({ "rights": false });
+        return res.json({ data: { rights: false } });
     }
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.data = { rights: true, decoded };
+    const ip = getIp();
 
-    next();
+    connection.query("SELECT IP FROM ips WHERE ID_USER = ?", [decoded.id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        for (const item of result) {
+            if (item.IP === ip) {
+                return res.json({ data: { rights: false } });
+            }
+        }
+
+        req.data = { rights: true, decoded };
+        next();
+    });
 }
 
 app.get("/api/rights", rightsMiddleware, (req, res) => {
@@ -106,6 +120,53 @@ async function checkUser(username, password) {
     });
 }
 
+async function checkUser(username, password, ip) {
+    return new Promise((resolve, reject) => {
+        connection.query(
+            "SELECT id_user, password FROM users WHERE username = ?",
+            [username],
+            async (error, result) => {
+                if (error) {
+                    console.log(error);
+                    return reject(false);
+                }
+
+                if (result.length === 0) {
+                    return resolve({ match: false, id: null, email: null });
+                }
+
+                const userId = result[0].id_user;
+                const hashedPassword = result[0].password;
+
+                const matchPassword = await bcrypt.compare(password, hashedPassword);
+
+                if (!matchPassword) {
+                    return resolve({ match: false, id: null, email: null });
+                }
+
+                connection.query(
+                    "SELECT IP FROM ips WHERE ID_USER = ?",
+                    [userId],
+                    (ipError, ipResult) => {
+                        if (ipError) {
+                            console.log(ipError);
+                            return reject(false);
+                        }
+
+                        const ipExists = ipResult.some(item => item.IP === ip);
+
+                        if (ipExists) {
+                            return resolve({ match: false, id: null, email: null });
+                        } else {
+                            return resolve({ match: true, id: result[0].id_user, email: result[0].email });
+                        }
+                    }
+                );
+            }
+        );
+    });
+}
+
 const addEntry = async (id) => {
     const ip = getIp();
 
@@ -119,7 +180,7 @@ const addEntry = async (id) => {
 
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
-    const { match, id, email } = await checkUser(username, password);
+    const { match, id, email } = await checkUser(username, password, getIp());
 
     if (match) {
         const token = jwt.sign({ id, username, email }, SECRET_KEY, { expiresIn: "24h" });
@@ -361,8 +422,45 @@ app.post("/api/getActivities", (req, res) => {
     });
 });
 
+app.post("/api/getBlocks", (req, res) => {
+    const { id } = req.body;
+
+    connection.query("SELECT * FROM ips WHERE ID_USER = ?", [id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.json(result);
+    });
+});
+
 app.post("/api/addBlock", (req, res) => {
-    console.log(req.body.ip);
+    const { ip, id } = req.body;
+
+    connection.query("INSERT INTO ips (IP, ID_USER) VALUES (?, ?)", [ip, id], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.json({ "message": "success" });
+    });
+});
+
+app.delete("/api/deleteBlock", (req, res) => {
+    const { id_user, id_ip } = req.body;
+
+    connection.query("DELETE FROM ips WHERE ID_USER = ? AND ID_IP = ?",
+        [id_user, id_ip],
+        (err, result) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            res.json({ "message": "success" });
+        });
 });
 
 //profile end
