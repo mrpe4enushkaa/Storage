@@ -1,8 +1,8 @@
 import "./Edit.scss";
 
-export default function Edit({ visible, avatar }) {
+export default function Edit({ visible, avatar, dialogEdit, setClick, tag }) {
     return (
-        <div className={`icon--edit-wrapper ${visible ? "visible" : ""} ${avatar ? "avatar" : ""}`}>
+        <div className={`icon--edit-wrapper ${visible ? "visible" : ""} ${avatar ? "avatar" : ""}`} onClick={() => { setClick(tag); dialogEdit.showModal(); }}>
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

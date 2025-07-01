@@ -117,6 +117,9 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
             .then(data => { if (data.message === "success") getBlocks() });
     }
 
+    const dialogEdit = useRef(null);
+    const [click, setClick] = useState("");
+
     return (
         <>
             <dialog ref={dialogAdd} className="dialogAddIp font-regular">
@@ -132,6 +135,20 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                     </div>
                 </div>
             </dialog>
+            <dialog ref={dialogEdit} className="dialogAddIp font-regular">
+                <div className="dialogAddIp--conteiner">
+                    <div className="dialogAddIp--block">
+                        <svg onClick={() => dialogEdit.current.close()} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 42L42 1M1 1L42 42" stroke="black" strokeWidth="3" strokeLinecap="round" />
+                        </svg>
+                        {click === "avatar" ? <span>Avatar</span> :
+                            click === "username" ? <span>Username</span> :
+                                click === "email" ? <span>Email</span> :
+                                    click === "password" ? <span>Password</span> :
+                                        null}
+                    </div>
+                </div>
+            </dialog>
             <section className='profile--settings hidden' ref={settingsBlock}>
                 <div className="profile--settings__conteiner">
                     <div className="profile--settings__user-data">
@@ -142,7 +159,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                             style={{ position: "relative", display: "inline-block", width: "fit-content" }}
                         >
                             <User settings={true} />
-                            <Edit visible={hoveredField === "avatar"} avatar={true} />
+                            <Edit dialogEdit={dialogEdit.current} visible={hoveredField === "avatar"} avatar={true} setClick={setClick} tag={hoveredField} />
                         </div>
                         <nav className="profile--settings__user-data__data">
                             <div
@@ -151,7 +168,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                                 onMouseLeave={() => setHoveredField(null)}
                             >
                                 <span className="font-regular">Username: {userContext?.decoded?.username}</span>
-                                <Edit visible={hoveredField === "username"} />
+                                <Edit dialogEdit={dialogEdit.current} visible={hoveredField === "username"} setClick={setClick} tag={hoveredField} />
                             </div>
 
                             <div
@@ -160,7 +177,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                                 onMouseLeave={() => setHoveredField(null)}
                             >
                                 <span className="font-regular">Email: {userContext?.decoded?.email}</span>
-                                <Edit visible={hoveredField === "email"} />
+                                <Edit dialogEdit={dialogEdit.current} visible={hoveredField === "email"} setClick={setClick} tag={hoveredField} />
                             </div>
 
                             <div
@@ -169,7 +186,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                                 onMouseLeave={() => setHoveredField(null)}
                             >
                                 <span className="font-regular">Password: *******</span>
-                                <Edit visible={hoveredField === "password"} />
+                                <Edit dialogEdit={dialogEdit.current} visible={hoveredField === "password"} setClick={setClick} tag={hoveredField} />
                             </div>
                         </nav>
                     </div>
