@@ -73,9 +73,11 @@ export default function Item() {
         }
     }
 
+    const [animationsKey, setAnimationsKey] = useState(localStorage.getItem("animations"));
+
     return (
         <>
-            <Background />
+            <Background animationsKey={animationsKey} />
             <div className="wrapper">
                 <div className="wrapper__inner">
                     <BackIcon className="icon--item back" onClick={() => navigate("/profile")} />
