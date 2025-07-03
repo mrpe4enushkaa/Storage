@@ -87,6 +87,11 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey, showT
     const handleAddNewIP = () => {
         const user_id = userContext.decoded.id;
 
+        if (inputIP.current.value.length < 6 || inputIP.current.value.length > 16) {
+            showToast("error", "Incorrect ip address");
+            return;
+        }
+
         fetch("http://localhost:3000/api/addBlock", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -127,7 +132,7 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey, showT
             <dialog ref={dialogAdd} className="dialogAddIp font-regular">
                 <div className="dialogAddIp--conteiner">
                     <div className="dialogAddIp--block">
-                        <svg onClick={() => dialogAdd.current.close()} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg onClick={() => { dialogAdd.current.close(); inputIP.current.value = ""; }} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 42L42 1M1 1L42 42" stroke="black" strokeWidth="3" strokeLinecap="round" />
                         </svg>
                         <span className="dialogAddIp--text">Block an IP address</span>
@@ -235,6 +240,11 @@ const EditDialog = {
         const inputRef = useRef(null);
 
         const handleChange = () => {
+            if (countFiles === 0) {
+                showToast("error", "No file selected");
+                return;
+            }
+
             const form = new FormData();
             form.append("id_user", user.decoded.id);
             form.append("file", inputRef.current.files[0]);
@@ -289,6 +299,11 @@ const EditDialog = {
         const inputRef = useRef(null);
 
         const handleChange = () => {
+            if (inputRef.current.value.length < 3 || inputRef.current.value.length > 20 || /[^a-zA-Z0-9_]/.test(inputRef.current.value)) {
+                showToast("error", "Invalid user name");
+                return;
+            }
+
             fetch("http://localhost:3000/api/editUser/username", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -322,6 +337,11 @@ const EditDialog = {
         const inputRef = useRef(null);
 
         const handleChange = () => {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputRef.current.value)) {
+                showToast("error", "Invalid user email");
+                return;
+            }
+
             fetch("http://localhost:3000/api/editUser/email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -356,6 +376,11 @@ const EditDialog = {
         const navigate = useNavigate();
 
         const handleChange = () => {
+            if (inputRef.current.value.length < 6 || inputRef.current.value.length > 30) {
+                showToast("error", "Invalid user password");
+                return;
+            }
+
             fetch("http://localhost:3000/api/editUser/password", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

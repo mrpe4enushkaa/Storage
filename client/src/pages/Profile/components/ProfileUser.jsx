@@ -91,7 +91,6 @@ export default function ProfileUser({ userData, userBlock, data }) {
             <div className="profile--user__data-user">
                 {userData.decoded.avatar === "none" ? <User /> :
                     <img src={userData.decoded.avatar} alt="avatar" style={{width: '350px', marginRight: "20px", objectFit: "cover", height: "350px", borderRadius: "1000px"}}/>}
-                {console.log(userData)}
                 <div className="profile--user__data" style={{marginLeft: "25px"}}>
                     <span className='font-regular profile--user__username'>
                         {userData?.decoded?.username}
