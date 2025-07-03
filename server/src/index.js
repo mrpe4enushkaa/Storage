@@ -453,20 +453,29 @@ app.post("/api/editUser/username", (req, res) => {
             return;
         }
 
-        const { email, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+        const text = `The username has been changed`;
 
-        res.clearCookie("jwt");
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id_user, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
 
-        const token = jwt.sign({ id, username: new_username, email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+            const { email, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
 
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 3600000 * 24
+            res.clearCookie("jwt");
+
+            const token = jwt.sign({ id, username: new_username, email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 3600000 * 24
+            });
+
+            res.json({ "message": "success" });
         });
-
-        res.json({ "message": "success" });
     });
 });
 
@@ -479,20 +488,29 @@ app.post("/api/editUser/email", (req, res) => {
             return;
         }
 
-        const { username, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+        const text = `The email has been changed`;
 
-        res.clearCookie("jwt");
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id_user, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
 
-        const token = jwt.sign({ id, username, email: new_email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+            const { username, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
 
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 3600000 * 24
+            res.clearCookie("jwt");
+
+            const token = jwt.sign({ id, username, email: new_email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 3600000 * 24
+            });
+
+            res.json({ "message": "success" });
         });
-
-        res.json({ "message": "success" });
     });
 });
 
@@ -506,8 +524,17 @@ app.post("/api/editUser/password", async (req, res) => {
             return;
         }
 
-        res.clearCookie("jwt");
-        res.json({ "message": "success" });
+        const text = `The password has been changed`;
+
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id_user, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
+
+            res.clearCookie("jwt");
+            res.json({ "message": "success" });
+        });
     });
 });
 
@@ -522,34 +549,43 @@ app.post("/api/editUser/avatar", upload.single("file"), async (req, res) => {
             return;
         }
 
-        const { username, id, email, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+        const text = `The avatar has been changed`;
 
-        const oldAvatar = path.basename(avatar);
-        const oldFile = path.join(__dirname, "uploads", oldAvatar);
+        connection.query("INSERT INTO activities (id_user, text) VALUES (?, ?)", [id_user, text], (err, result) => {
+            if (err) {
+                console.error("Ошибка при вставке в базу данных:", err);
+                return;
+            }
 
-        if (oldFile) {
-            fs.unlink(oldFile, (err) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
+            const { username, id, email, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+
+            if (avatar !== "none") {
+                const oldAvatar = path.basename(avatar);
+                const oldFile = path.join(__dirname, "uploads", oldAvatar);
+
+                fs.unlink(oldFile, (err) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                });
+            }
+
+            res.clearCookie("jwt");
+
+            const baseUrl = `http://localhost:3000/avatar/${url}`;
+
+            const token = jwt.sign({ id, username, email, avatar: baseUrl }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+            res.cookie("jwt", token, {
+                httpOnly: true,
+                secure: false,
+                sameSite: "lax",
+                maxAge: 3600000 * 24
             });
-        }
 
-        res.clearCookie("jwt");
-
-        const baseUrl = `http://localhost:3000/avatar/${url}`;
-
-        const token = jwt.sign({ id, username, email, avatar: baseUrl }, process.env.SECRET_KEY, { expiresIn: "24h" });
-
-        res.cookie("jwt", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 3600000 * 24
+            res.json({ "message": "success" });
         });
-
-        res.json({ "message": "success" });
     });
 });
 
