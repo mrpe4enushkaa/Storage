@@ -132,6 +132,13 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+
+    &.edit {
+        width: 104%;
+        padding: 0;
+        margin-bottom: 15px;
+        margin-top: 10px;
+    }
 }
 
 .container__drag-and-drop {

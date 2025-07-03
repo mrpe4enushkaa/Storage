@@ -6,6 +6,8 @@ import { UserContext } from '../context/UserContext';
 import { data, useNavigate } from "react-router-dom";
 import Edit from "../../../components/UI/Edit/Edit";
 import User from "../../../components/UI/User/User";
+import Cloud from "../../../images/Cloud.png?react";
+import CloudDone from "../../../images/CloudDone.png?react";
 
 export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
     const userContext = useContext(UserContext);
@@ -141,10 +143,10 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                         <svg onClick={() => dialogEdit.current.close()} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 42L42 1M1 1L42 42" stroke="black" strokeWidth="3" strokeLinecap="round" />
                         </svg>
-                        {click === "avatar" ? <span>Avatar</span> :
-                            click === "username" ? <span>Username</span> :
-                                click === "email" ? <span>Email</span> :
-                                    click === "password" ? <span>Password</span> :
+                        {click === "avatar" ? <EditDialog.Avatar user={userContext} /> :
+                            click === "username" ? <EditDialog.Username user={userContext} /> :
+                                click === "email" ? <EditDialog.Email user={userContext} /> :
+                                    click === "password" ? <EditDialog.Password user={userContext} /> :
                                         null}
                     </div>
                 </div>
@@ -223,4 +225,93 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
             </section>
         </>
     );
+}
+
+const EditDialog = {
+    Avatar: ({ user }) => {
+        const [countFiles, setCountFiles] = useState(0);
+        const setFiles = useRef([]);
+        const inputRef = useRef(null);
+
+        const handleChange = () => {
+            console.log(user)
+        }
+
+        return (
+            <>
+                <span className="dialogAddIp--text">Change the avatar</span>
+                <label htmlFor="input-files" className="label__drag-and-drop edit">
+                    <input
+                        type="file"
+                        hidden
+                        id="input-files"
+                        ref={inputRef}
+                        onChange={(e) => {
+                            const files = Array.from(e.target.files);
+                            setFiles.current = Array.from(e.target.files);
+                            setCountFiles(e.target.files.length);
+                        }}
+                    />
+                    <div className="container__drag-and-drop">
+                        {countFiles === 0 ? (<>
+                            <img src={Cloud} alt="cloud" className="img-cloud" />
+                            <span className="font-regular">Drag and drop or click <br /> here to upload</span>
+                        </>) : (<>
+                            <img src={CloudDone} alt="cloud" className="img-cloud done" />
+                            <span className="font-regular">Uploaded</span>
+                        </>)}
+                    </div>
+                </label>
+                <button onClick={handleChange} className="dialogAddIp--button">Change</button>
+            </>
+        );
+    },
+
+    Username: ({ user }) => {
+        const inputRef = useRef(null);
+
+        const handleChange = () => {
+
+        }
+
+        return (
+            <>
+                <span className="dialogAddIp--text">Change the username </span>
+                <input ref={inputRef} type="text" className="dialogAddIp--input" />
+                <button onClick={handleChange} className="dialogAddIp--button">Change</button>
+            </>
+        );
+    },
+
+    Email: ({ user }) => {
+        const inputRef = useRef(null);
+
+        const handleChange = () => {
+
+        }
+
+        return (
+            <>
+                <span className="dialogAddIp--text">Change the email</span>
+                <input ref={inputRef} type="email" className="dialogAddIp--input" />
+                <button onClick={handleChange} className="dialogAddIp--button">Change</button>
+            </>
+        );
+    },
+
+    Password: ({ user }) => {
+        const inputRef = useRef(null);
+
+        const handleChange = () => {
+
+        }
+
+        return (
+            <>
+                <span className="dialogAddIp--text">Change the password</span>
+                <input ref={inputRef} type="password" className="dialogAddIp--input" />
+                <button onClick={handleChange} className="dialogAddIp--button">Change</button>
+            </>
+        );
+    }
 }
