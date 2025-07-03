@@ -36,17 +36,21 @@
 }
 
 label {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+    margin-bottom: 5px;
 }
 
 input {
-    width: 91%;
-    height: 35px;
-    border-radius: 20px;
+    width: 89%;
+    height: 54px;
+    border-radius: 100px;
     border: none;
     margin-bottom: 15px;
     outline: none;
     padding: 0 15px;
+    padding-left: 25px;
+    padding-top: 2px;
+    font-size: 18px;
 }
 
 .input--error {
