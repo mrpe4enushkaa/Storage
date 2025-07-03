@@ -100,30 +100,10 @@ const getIp = () => {
 }
 
 //identification start
-async function checkUser(username, password) {
-    return new Promise((resolve, reject) => {
-        connection.query("SELECT id_user, password, email FROM users WHERE username = ?", [username], async (error, result) => {
-            if (error) {
-                console.log(error);
-                return reject(false);
-            }
-
-            if (result.length > 0) {
-                const hashedPassword = result[0].password;
-                const match = await bcrypt.compare(password, hashedPassword);
-
-                return resolve({ match, id: result[0].id_user, email: result[0].email });
-            } else {
-                return resolve({ match: false, id: null, email: null });
-            }
-        });
-    });
-}
-
 async function checkUser(username, password, ip) {
     return new Promise((resolve, reject) => {
         connection.query(
-            "SELECT id_user, password, email FROM users WHERE username = ?",
+            "SELECT id_user, password, email, avatar FROM users WHERE username = ?",
             [username],
             async (error, result) => {
                 if (error) {
@@ -132,7 +112,7 @@ async function checkUser(username, password, ip) {
                 }
 
                 if (result.length === 0) {
-                    return resolve({ match: false, id: null, email: null });
+                    return resolve({ match: false, id: null, email: null, avatar: null });
                 }
 
                 const userId = result[0].id_user;
@@ -141,7 +121,7 @@ async function checkUser(username, password, ip) {
                 const matchPassword = await bcrypt.compare(password, hashedPassword);
 
                 if (!matchPassword) {
-                    return resolve({ match: false, id: null, email: null });
+                    return resolve({ match: false, id: null, email: null, avatar: null });
                 }
 
                 connection.query(
@@ -156,9 +136,9 @@ async function checkUser(username, password, ip) {
                         const ipExists = ipResult.some(item => item.IP === ip);
 
                         if (ipExists) {
-                            return resolve({ match: false, id: null, email: null });
+                            return resolve({ match: false, id: null, email: null, avatar: null });
                         } else {
-                            return resolve({ match: true, id: result[0].id_user, email: result[0].email });
+                            return resolve({ match: true, id: result[0].id_user, email: result[0].email, avatar: result[0].avatar });
                         }
                     }
                 );
@@ -180,10 +160,10 @@ const addEntry = async (id) => {
 
 app.post("/api/checkUser", async (req, res) => {
     const { username, password } = req.body;
-    const { match, id, email } = await checkUser(username, password, getIp());
+    const { match, id, email, avatar } = await checkUser(username, password, getIp());
 
     if (match) {
-        const token = jwt.sign({ id, username, email }, SECRET_KEY, { expiresIn: "24h" });
+        const token = jwt.sign({ id, username, email, avatar }, SECRET_KEY, { expiresIn: "24h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,
@@ -205,20 +185,21 @@ async function addUser(email, username, password) {
     const hashPassword = await bcrypt.hash(password, 15);
 
     return new Promise((resolve, reject) => {
-        connection.query("INSERT INTO users (email, username, password) VALUES (?, ?, ?)", [email, username, hashPassword], (error, result) => {
+        connection.query("INSERT INTO users (email, username, password, avatar) VALUES (?, ?, ?, 'none')", [email, username, hashPassword], (error, result) => {
             if (error) {
+                console.log(error)
                 return resolve({ add: false, id: null });
             }
 
             if (result) {
-                connection.query("SELECT id_user FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
+                connection.query("SELECT id_user, avatar FROM users WHERE email = ? AND username = ? AND password = ?", [email, username, hashPassword], (error, result) => {
                     if (error) {
                         return reject({ add: false, id: null });
                     }
 
                     addEntry(result[0].id_user);
 
-                    return resolve({ add: true, id: result[0].id_user });
+                    return resolve({ add: true, id: result[0].id_user, avatar: result[0].avatar });
                 });
             }
         });
@@ -227,10 +208,10 @@ async function addUser(email, username, password) {
 
 app.post("/api/addUser", async (req, res) => {
     const { email, username, password } = req.body;
-    const { add, id } = await addUser(email, username, password);
+    const { add, id, avatar } = await addUser(email, username, password);
 
     if (add) {
-        const token = jwt.sign({ id, username, email }, process.env.SECRET_KEY, { expiresIn: "24h" });
+        const token = jwt.sign({ id, username, email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
 
         res.cookie("jwt", token, {
             httpOnly: true,
@@ -463,6 +444,145 @@ app.delete("/api/deleteBlock", (req, res) => {
         });
 });
 
+app.post("/api/editUser/username", (req, res) => {
+    const { id_user, new_username } = req.body;
+
+    connection.query("UPDATE users SET username = ? WHERE id_user = ?", [new_username, id_user], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const { email, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+
+        res.clearCookie("jwt");
+
+        const token = jwt.sign({ id, username: new_username, email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 3600000 * 24
+        });
+
+        res.json({ "message": "success" });
+    });
+});
+
+app.post("/api/editUser/email", (req, res) => {
+    const { id_user, new_email } = req.body;
+
+    connection.query("UPDATE users SET email = ? WHERE id_user = ?", [new_email, id_user], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const { username, id, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+
+        res.clearCookie("jwt");
+
+        const token = jwt.sign({ id, username, email: new_email, avatar }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 3600000 * 24
+        });
+
+        res.json({ "message": "success" });
+    });
+});
+
+app.post("/api/editUser/password", async (req, res) => {
+    const { id_user, new_password } = req.body;
+    const hash = await bcrypt.hash(new_password, 15)
+
+    connection.query("UPDATE users SET password = ? WHERE id_user = ?", [hash, id_user], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        res.clearCookie("jwt");
+        res.json({ "message": "success" });
+    });
+});
+
+app.post("/api/editUser/avatar", upload.single("file"), async (req, res) => {
+    const { id_user } = req.body;
+    const file = req.file;
+    const url = file.filename;
+
+    connection.query("UPDATE users SET avatar = ? WHERE id_user = ?", [url, id_user], (err, result) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+
+        const { username, id, email, avatar } = jwt.verify(req.cookies.jwt, process.env.SECRET_KEY);
+
+        const oldAvatar = path.basename(avatar);
+        const oldFile = path.join(__dirname, "uploads", oldAvatar);
+
+        if (oldFile) {
+            fs.unlink(oldFile, (err) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+            });
+        }
+
+        res.clearCookie("jwt");
+
+        const baseUrl = `http://localhost:3000/avatar/${url}`;
+
+        const token = jwt.sign({ id, username, email, avatar: baseUrl }, process.env.SECRET_KEY, { expiresIn: "24h" });
+
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 3600000 * 24
+        });
+
+        res.json({ "message": "success" });
+    });
+});
+
+app.get("/avatar/:filename", rightsMiddleware, (req, res) => {
+    const id_user = req.data.decoded.id;
+    const filename = req.params.filename;
+    const uploadsDir = path.join(__dirname, "uploads");
+    const requestedPath = path.resolve(uploadsDir, filename);
+
+    if (!requestedPath.startsWith(uploadsDir)) {
+        return res.status(400).send("Некорректный путь");
+    }
+
+    connection.query("SELECT avatar FROM users WHERE id_user = ?", [id_user], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Ошибка сервера");
+        }
+
+        if (!result.length || result[0].avatar !== filename) {
+            return res.status(403).send("Доступ запрещён");
+        }
+
+        if (!fs.existsSync(requestedPath)) {
+            return res.status(404).send("Файл не найден");
+        }
+
+        const absolutePath = path.join(__dirname, "uploads", filename);
+
+        res.sendFile(absolutePath);
+    });
+});
+
 //profile end
 
 //item start
@@ -560,7 +680,6 @@ app.get("/files/:filename", rightsMiddleware, (req, res) => {
             return res.status(404).send("Файл не найден");
         }
 
-        // res.setHeader("Content-Type", "application/pdf");
         res.download(requestedPath);
     });
 });

@@ -89,17 +89,16 @@ export default function ProfileUser({ userData, userBlock, data }) {
     return (
         <section className='profile--user' ref={userBlock}>
             <div className="profile--user__data-user">
-                <User />
-                <div className="profile--user__data">
+                {userData.decoded.avatar === "none" ? <User /> :
+                    <img src={userData.decoded.avatar} alt="avatar" style={{width: '350px', marginRight: "20px", objectFit: "cover", height: "350px", borderRadius: "1000px"}}/>}
+                {console.log(userData)}
+                <div className="profile--user__data" style={{marginLeft: "25px"}}>
                     <span className='font-regular profile--user__username'>
                         {userData?.decoded?.username}
                     </span>
                     <span className='font-regular profile--user__email'>
                         {userData?.decoded?.email}
                     </span>
-                    {/* <button className="font-regular profile--user__button--edit-password">
-                        Edit password
-                    </button> */}
                 </div>
             </div>
             <div className="profile--user__about">

@@ -205,7 +205,7 @@ export default function Profile({ showToast }) {
                             <>
                                 <ProfileUser userData={userData} userBlock={userBlock} data={data} />
                                 <ProfileFiles filesBlock={filesBlock} data={searchData} />
-                                <ProfileSettings settingsBlock={settingsBlock} setAnimationsKey={setAnimationsKey} />
+                                <ProfileSettings settingsBlock={settingsBlock} setAnimationsKey={setAnimationsKey} showToast={showToast} />
                             </>
                         )}
                     </section>

@@ -3,13 +3,13 @@ import AddIcon from "../../../images/Add.svg?react";
 import PencilIcon from "../../../images/Pencil.svg?react";
 import DeleteIcon from "../../../images/Delete.svg?react";
 import { UserContext } from '../context/UserContext';
-import { data, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Edit from "../../../components/UI/Edit/Edit";
 import User from "../../../components/UI/User/User";
 import Cloud from "../../../images/Cloud.png?react";
 import CloudDone from "../../../images/CloudDone.png?react";
 
-export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
+export default function ProfileSettings({ settingsBlock, setAnimationsKey, showToast }) {
     const userContext = useContext(UserContext);
     const navigate = useNavigate();
     const checkboxRef = useRef(null);
@@ -143,10 +143,10 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                         <svg onClick={() => dialogEdit.current.close()} className="icon-close" width="43" height="43" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 42L42 1M1 1L42 42" stroke="black" strokeWidth="3" strokeLinecap="round" />
                         </svg>
-                        {click === "avatar" ? <EditDialog.Avatar user={userContext} /> :
-                            click === "username" ? <EditDialog.Username user={userContext} /> :
-                                click === "email" ? <EditDialog.Email user={userContext} /> :
-                                    click === "password" ? <EditDialog.Password user={userContext} /> :
+                        {click === "avatar" ? <EditDialog.Avatar user={userContext} showToast={showToast} /> :
+                            click === "username" ? <EditDialog.Username user={userContext} showToast={showToast} /> :
+                                click === "email" ? <EditDialog.Email user={userContext} showToast={showToast} /> :
+                                    click === "password" ? <EditDialog.Password user={userContext} showToast={showToast} /> :
                                         null}
                     </div>
                 </div>
@@ -160,10 +160,11 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
                             onMouseLeave={() => setHoveredField(null)}
                             style={{ position: "relative", display: "inline-block", width: "fit-content" }}
                         >
-                            <User settings={true} />
+                            {userContext.decoded.avatar === "none" ? <User settings={true} /> :
+                                <img src={userContext.decoded.avatar} className="icon--user" alt="avatar" style={{ width: "200px", borderRadius: "1000px", position: "relative", objectFit: "cover", height: "200px", borderRadius: "1000px" }} />}
                             <Edit dialogEdit={dialogEdit.current} visible={hoveredField === "avatar"} avatar={true} setClick={setClick} tag={hoveredField} />
                         </div>
-                        <nav className="profile--settings__user-data__data">
+                        <nav className="profile--settings__user-data__data" style={{ marginLeft: "20px" }}>
                             <div
                                 className="profile--settings__user-data__data-flex"
                                 onMouseEnter={() => setHoveredField("username")}
@@ -228,13 +229,30 @@ export default function ProfileSettings({ settingsBlock, setAnimationsKey }) {
 }
 
 const EditDialog = {
-    Avatar: ({ user }) => {
+    Avatar: ({ user, showToast }) => {
         const [countFiles, setCountFiles] = useState(0);
         const setFiles = useRef([]);
         const inputRef = useRef(null);
 
         const handleChange = () => {
-            console.log(user)
+            const form = new FormData();
+            form.append("id_user", user.decoded.id);
+            form.append("file", inputRef.current.files[0]);
+
+            fetch("http://localhost:3000/api/editUser/avatar", {
+                method: "POST",
+                body: form,
+                credentials: "include"
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "success") {
+                        window.location.reload();
+                    } else {
+                        showToast("error", "Avatar didn't change");
+                        console.error("avatar didn't change");
+                    }
+                })
         }
 
         return (
@@ -267,43 +285,95 @@ const EditDialog = {
         );
     },
 
-    Username: ({ user }) => {
+    Username: ({ user, showToast }) => {
         const inputRef = useRef(null);
 
         const handleChange = () => {
-
+            fetch("http://localhost:3000/api/editUser/username", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    id_user: user.decoded.id,
+                    new_username: inputRef.current.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "success") {
+                        window.location.reload();
+                    } else {
+                        showToast("error", "Username didn't change");
+                        console.error("username didn't change");
+                    }
+                });
         }
 
         return (
             <>
                 <span className="dialogAddIp--text">Change the username </span>
-                <input ref={inputRef} type="text" className="dialogAddIp--input" />
+                <input ref={inputRef} type="text" className="dialogAddIp--input" defaultValue={user.decoded.username} />
                 <button onClick={handleChange} className="dialogAddIp--button">Change</button>
             </>
         );
     },
 
-    Email: ({ user }) => {
+    Email: ({ user, showToast }) => {
         const inputRef = useRef(null);
 
         const handleChange = () => {
-
+            fetch("http://localhost:3000/api/editUser/email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    id_user: user.decoded.id,
+                    new_email: inputRef.current.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "success") {
+                        window.location.reload();
+                    } else {
+                        showToast("error", "Email didn't change");
+                        console.error("email didn't change");
+                    }
+                });
         }
 
         return (
             <>
                 <span className="dialogAddIp--text">Change the email</span>
-                <input ref={inputRef} type="email" className="dialogAddIp--input" />
+                <input ref={inputRef} type="email" className="dialogAddIp--input" defaultValue={user.decoded.email} />
                 <button onClick={handleChange} className="dialogAddIp--button">Change</button>
             </>
         );
     },
 
-    Password: ({ user }) => {
+    Password: ({ user, showToast }) => {
         const inputRef = useRef(null);
+        const navigate = useNavigate();
 
         const handleChange = () => {
-
+            fetch("http://localhost:3000/api/editUser/password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                    id_user: user.decoded.id,
+                    new_password: inputRef.current.value
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "success") {
+                        navigate("/");
+                    } else {
+                        showToast("error", "Password didn't change");
+                        console.error("password didn't change");
+                    }
+                });
         }
 
         return (
