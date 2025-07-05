@@ -23,7 +23,6 @@
 * [React](https://react.dev/)
 * [Vite](https://vitejs.dev/)
 * [React Router DOM](https://reactrouter.com/)
-* [React PDF](https://github.com/wojtekmaj/react-pdf)
 * [GSAP](https://greensock.com/gsap/)
 * [Framer Motion](https://www.framer.com/motion/)
 * [React Spring](https://react-spring.dev/)
