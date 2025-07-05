@@ -116,9 +116,3 @@ The project is under active development with plans to implement:
 ## 🐛 Bug Reports
 
 Found a bug or issue? Please open an [issue here](https://github.com/mrpe4enushkaa/Storage/issues).
-
----
-
-## 📄 License
-
-[ISC License](https://opensource.org/licenses/ISC) © [mrpe4enushkaa](https://github.com/mrpe4enushkaa)
