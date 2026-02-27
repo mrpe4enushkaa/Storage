@@ -20,7 +20,7 @@ export default function Background({ animationsKey }) {
                 amplitude={amplitude}
                 distance={1.4}
                 enableMouseInteraction={false}
-                color={[255, 255, 255]}
+                color={[1, 1, 1]}
             />
         </div>
     );
